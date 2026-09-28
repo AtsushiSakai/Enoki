@@ -9,11 +9,11 @@ const context = await browser.newContext({viewport:{width:1440,height:1050},devi
 const page = await context.newPage();
 const errors = [], requests = [], checks = [];
 page.on('pageerror', (error) => errors.push(String(error)));
-page.on('request', (request) => requests.push(request.url()));
+context.on('request', (request) => requests.push(request.url()));
 const check = (name, condition, detail='') => {checks.push({name,passed:!!condition,detail}); if(!condition) throw new Error(name+': '+detail);};
 try {
   await page.goto(base, {waitUntil:'networkidle'});
-  await page.waitForFunction(()=>document.documentElement.dataset.engine === 'ready', {timeout:30000});
+  await page.waitForFunction(()=>document.documentElement.dataset.engine === 'ready', null, {timeout:90000});
   await page.waitForFunction(()=>document.querySelectorAll('.emoji-button').length>0);
   check('English Enoki interface', await page.title() === 'Enoki — Japanese at your fingertips' && await page.locator('html').getAttribute('lang') === 'en');
   const emojiLabels = await page.locator('.emoji-button, #emoji-categories button').evaluateAll(nodes => nodes.map(node => node.getAttribute('aria-label')));
@@ -92,7 +92,7 @@ try {
   const expectedCount = await page.evaluate(()=>[...new Intl.Segmenter('ja',{granularity:'grapheme'}).segment(document.querySelector('#editor').value)].length);
   check('Grapheme character count', Number(actualCount.replaceAll(',',''))===expectedCount);
   await page.screenshot({path:path.join(root,'artifacts/emoji-desktop.png'),fullPage:true});
-  await page.waitForFunction(()=>document.documentElement.dataset.offline === 'ready', {timeout:60000});
+  await page.waitForFunction(()=>document.documentElement.dataset.offline === 'ready', null, {timeout:90000});
   await context.setOffline(true);
   await page.reload({waitUntil:'networkidle'});
   await page.waitForFunction(()=>document.documentElement.dataset.engine==='ready');

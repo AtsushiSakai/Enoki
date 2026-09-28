@@ -1,5 +1,7 @@
 # Enoki
 
+[Open Enoki](https://atsushisakai.github.io/Enoki/) · [Source repository](https://github.com/AtsushiSakai/Enoki)
+
 A browser app for writing Japanese with an English keyboard. Type romaji, choose kanji, and copy your text. All interface labels, instructions, emoji names, and status messages are in English.
 
 ## Start
