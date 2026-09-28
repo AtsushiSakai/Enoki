@@ -1,0 +1,17 @@
+{
+  "upstream": "https://github.com/msonrm/hechima",
+  "hechima": "0.24.0",
+  "keymap-engine": "2.10.0",
+  "wasm": "0.7.1 single-thread",
+  "files": {
+    "hechima/hechima.js": "a3f7cde2193061bbaeaae5126aecf3bc3ce2a61a1050ca0c1deb0a8a98d30690",
+    "hechima/hechima-worker.js": "93f23a5e378d2802639b9a3a955e5381bc27c03635f2cf0b9cafd8cb60bea524",
+    "hechima/hechima.d.ts": "52a14b362fb127cae17b07a7a5b198860c85ecb0ba94fa8aff9544ecc02c4a19",
+    "hechima-wasm/hechima-wasm.js": "919c95012901731ec490660b9e823d20998c658dba2d78a60119fa00438f8e7d",
+    "hechima-wasm/hechima-wasm.wasm": "e0d3d7e7a84b8a4980626bf16f7404d7c65d67403b98da298f33690fd74a33a4",
+    "hechima-wasm/mozc.data": "0a3eec3a34e7582c3519f05fb90d09158cd4b42d2668a7790288fb519b44b84f",
+    "hechima-wasm/BUILD_INFO.txt": "05e602761b46a18be3fe9d461d51415e94642b2ad0069d52afd33b5625fe6902",
+    "keymap-engine/keymap-engine.js": "d9b4f4edacf50f6d15bef872b8bebbd03b2a10bb03a16fa23ecc8fc3526129b2",
+    "keymaps/romaji.json": "4f20b2bd210941c04fdf7f8907a45ff2c1bfda34e5009066b1b71938a0bf802a"
+  }
+}

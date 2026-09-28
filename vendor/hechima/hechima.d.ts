@@ -1,0 +1,427 @@
+// Hechima v0.24.0 — 変換セッション層 単体バンドルの型定義（手書き。cb 契約の明文化）。
+// 要 KeymapEngine >= 2.0.0（keymap v2。配列は roles で役を宣言し、物理キーへの割当は
+// layouts + ホストの roleOverrides で決まる。**v1 のキーマップは読めない**）。
+// v0.19.0 は engine の局面問い合わせ（InputEngine.hostPhase）を配線する。
+// v0.20.0 は内蔵ローマ字と engine 経路（JSON 配列）の挙動差を消した: 英字合成が engine 挿し
+// でも 2 字目以降続くようになり（「Ja」が「Jあ」にならない）、記号は**どちらの経路でも
+// 特別扱いしない**（空でも文中でも未確定に入り変換対象。内蔵の「空なら即確定」を廃止）。
+// v0.23.0 は worker に paths 要求を足した（区切りの異なる経路の列挙。WorkerConnection.paths）。
+// ※ このヘッダの版は web/src/hechima/version.ts の HECHIMA_VERSION と一致させること
+//   （hechima リポジトリ側は npm run build が機械照合する）。
+// 対応バンドル: hechima.js / hechima.min.js（UMD、グローバル名 `Hechima`）
+//             + hechima-worker.js（Worker 本体、へちま蔓 v0。connectWorker で接続する）
+// リファレンス: docs/hechima-session-embedding.md / docs/hechima-protocol.md
+// （logical-layout-labo リポジトリ）。公開向けの最小ガイドは hechima リポジトリの
+// EMBEDDING.md（https://github.com/msonrm/hechima）。
+
+/** cb.show へ渡す表示文節。kind: yomi=未確定よみ / focus=注目文節 / other=非注目文節 */
+export interface SegmentView {
+  text: string;
+  kind: "yomi" | "focus" | "other";
+  /**
+   * よみの末尾のうち、まだ続きを待っている打鍵の仮表示の文字数（v0.24.0+、kind yomi のみ・
+   * 0 のときは載らない）。ローマ字の途中の `k`、行段系の子音を行の代表で見せた「ま」など。
+   * UI はここを薄く描くなどして、確定したかなと見分けられるようにする。変換には流れない。
+   * 数えるのはコードポイント
+   */
+  pending?: number;
+  /**
+   * この文節の候補一覧（v0.5.0+、候補選択中 = kind focus/other のときのみ）。
+   * 候補 UI（ポップアップ等）の描画用。読み取り専用（コピー）。
+   * 表示値の重複は除去済み（v0.5.1+、初出順保持）。
+   * 選択は selectCandidate() / Space / ↑↓ で行う。
+   */
+  candidates?: string[];
+  /** candidates 内の現在選択位置（v0.5.0+、候補選択中のみ） */
+  candidateIndex?: number;
+  /**
+   * 展開済みの追加候補（v0.6.0+、注目文節のみ）。通常候補の先頭で ↑（v0.18.0+ は engine 挿し時も Shift+Space）
+   * を押すたびに 1 つずつ展開される（ひらがな → カタカナ の順。KeyLogicKit / azooKey-Desktop 準拠）。
+   * UI は通常候補の上に注釈付きで表示する。
+   */
+  additional?: { text: string; annotation: string }[];
+  /** additional 内の選択位置（追加候補領域を選択中のみ。0 = 最上部） */
+  additionalIndex?: number;
+  /**
+   * 一層目（既定で見せる候補）の件数（v0.14.0+、二層化しているときのみ）。
+   * UI は candidates.slice(0, foldCount) を既定の候補窓に描き、残り
+   * candidates.length - foldCount 件は「+n 件」等の到達手段として示す。
+   */
+  foldCount?: number;
+  /** 二層目を展開中か（v0.14.0+。expandCandidates() で true になる） */
+  expanded?: boolean;
+}
+
+/** cb.convert が返す文節。candidates 省略/空は key をそのまま候補にする */
+export interface ConvertSegment {
+  key: string;
+  candidates?: string[];
+  /**
+   * candidates と同じ長さ・同じ順の変換コスト（v0.14.0+、小さいほど上位）。
+   * 候補の二層化（FoldOptions）が使う。省略 = コスト不明 = 二層化しない。
+   * hechima-wasm v0.8.0+ が返す（connectWorker 経由なら自動で載る）。
+   */
+  costs?: number[];
+}
+
+/**
+ * 候補の二層化設定（v0.14.0+）。createFep の第 2 引数 `{ fold }` で渡す。
+ *
+ * 変換候補は同音異義の当て字・人名で数十〜200 件に膨れる（実測: 「こうせい」94 件、
+ * 「ゆうき」184 件）。全部を同じ流れに並べると選びたい候補が紛れるので、
+ * **1 位からのコスト差**で「既定で見せる候補（一層目）」を切り出し、残りは
+ * expandCandidates() を呼ぶまで候補巡回に現れないようにする。
+ *
+ * コスト差を基準にするのは、それが「よみの性質」を自動的に反映するため:
+ * 一般語はコストが急に開くので少数で切れ（こうせい → 13 件）、人名系は候補が拮抗して
+ * いるので上限までは出る（ひろし → 15 件）。件数を固定するより実態に合う。
+ *
+ * **未指定 / costDelta 省略 = 二層化しない**（従来どおり全候補が 1 つの流れ）。
+ */
+export interface FoldOptions {
+  /** 一層目に入れる「1 位からのコスト差」の上限。省略/0 = 二層化しない */
+  costDelta?: number;
+  /** 一層目の最小件数（コスト差で切りすぎないための下限）。既定 5 */
+  minCandidates?: number;
+  /** 一層目の最大件数（拮抗しているよみで出しすぎないための上限）。既定 15 */
+  maxCandidates?: number;
+}
+
+/**
+ * ホストが実装するコールバック契約（必須 3 + 省略可 7 の計 10 点）。
+ * ホストごとの差し替え点はここに閉じる。必須は show / hide / commit の 3 点で、
+ * 残り（hostKey / convert / resize / learn / reconvert / retract / unlearn）は省略可
+ * ＝ 省略時は各項の記載どおり degrade する。
+ *
+ * - show(segments): 未確定表示を描画する（文節配列）。
+ * - hide(): 表示消去（バッファが空になった）。
+ * - commit(text): 確定文字列を出力する。呼び元が hide → 注入の順で処理する
+ *   （例: QuuBee=SJIS 注入 / エディタ=挿入 / 試打サイト=追記）。
+ * - hostKey(name): ホスト文書へ実キーを 1 打注入する（name = KeyboardEvent.code 名、
+ *   例 'ArrowLeft' / 'Backspace'）。編集キーをバッファが空のときに実カーソル/BS へ
+ *   橋渡しするための口。省略可。
+ * - convert(yomi): かな→文節/候補のかな漢字変換（hechima-wasm 等を注入する差し替え点）。
+ *   null/省略/失敗 = フォールバック（よみ 1 文節・カタカナ/ひらがな巡回）。
+ * - resize(segmentIndex, offset): 文節伸縮（hechima-wasm v0.2.0+ の hechima_resize 等）。
+ *   省略可。segmentIndex 文節のよみを offset（よみ文字数、±）だけ伸縮し再変換後の全文節を
+ *   返す。null/空/失敗 = 伸縮不能（現状維持）。候補選択中の editSegmentLeft/Right
+ *   （薙刀式 space+T/Y 等）がこれを使う。未提供なら editSegment* は無害に飲まれる。
+ */
+export interface SessionCallbacks {
+  show(segments: SegmentView[]): void;
+  hide(): void;
+  commit(text: string): void;
+  hostKey?(name: string): void;
+  convert?(yomi: string): Promise<ConvertSegment[] | null> | ConvertSegment[] | null;
+  resize?(segmentIndex: number, offset: number): Promise<ConvertSegment[] | null> | ConvertSegment[] | null;
+  /**
+   * 確定内容の学習通知（v0.8.0+、省略可・fire-and-forget）。候補選択中（Phase 2）の確定時に
+   * 各文節の「よみ + 確定表示値」の列で呼ばれる（英字合成の確定では呼ばれない）。
+   * connectWorker の callbacks() を繋げば Mozc の学習（候補選択 + 文節境界）に流れる。
+   */
+  learn?(segments: { key: string; value: string }[]): void;
+  /**
+   * よみ入力中の候補（v0.22.0+、省略可）。**打ちながら並べる候補**で、タッチ入力の
+   * 候補バーが使う。よみが変わるたびに呼ばれ、空配列 = 出すものが無い（消す）。
+   * 選ぶのは FepSession.commitSuggestion(index)。
+   * **これを渡さない限りサジェストの取得自体を行わない**（渡すと打鍵のたびに
+   * cb.convert が走る）。既存ホストは無変更で従来どおり動く。
+   */
+  suggest?(candidates: string[]): void;
+  /**
+   * 再変換（v0.10.0+、省略可）。確定済みの表記から逆変換でよみを求め、変換結果（keys がよみ）を返す。
+   * null/省略/失敗 = 再変換不能。FepSession.reconvert() が使う。
+   */
+  reconvert?(surface: string): Promise<ConvertSegment[] | null> | ConvertSegment[] | null;
+  /**
+   * 確定アンドゥの文書側協力（v0.9.0+、省略可）。ホスト文書の末尾が text と一致するなら
+   * それを取り除いて true（一致しない = その後に編集があった等なら false = アンドゥ不成立）。
+   */
+  retract?(text: string): boolean;
+  /** 確定アンドゥ時の学習巻き戻し（v0.9.0+、省略可）。connectWorker の callbacks() で Mozc RevertConversion に流れる */
+  unlearn?(): void;
+}
+
+/** feed / feedUp が読む KeyboardEvent 互換の最小形（DOM 型に依存しない） */
+export interface KeyTap {
+  /** KeyboardEvent.key（内蔵ローマ字経路はこれだけ読む） */
+  key: string;
+  /** KeyboardEvent.code（engine 経路の HID 変換と編集キー二重経路の判定に使う） */
+  code?: string;
+  repeat?: boolean;
+  shiftKey?: boolean;
+  ctrlKey?: boolean;
+  altKey?: boolean;
+  metaKey?: boolean;
+}
+
+/** KeymapEngine の KeyEvent（構造互換。エンジン注入時のみ使う） */
+export interface KeyEvent {
+  keyCode: number;
+  characters: string;
+  modifiers: number;
+}
+
+/** setEngine に渡す KeyTap → KeyEvent 変換（KeymapEngine.keyEventFromBrowser がそのまま使える） */
+export type KeyEventOf = (tap: KeyTap) => KeyEvent | null;
+
+/**
+ * KeymapEngine の InputEngine（構造互換の最小形）。
+ * setEngine には `new KeymapEngine.InputEngine(...)` をそのまま渡す。
+ * onHostAction は hechima が配線する（KeymapEngine >= 1.2.0 が必要。1.1.0 以前だと
+ * Phase 2 の SandS 単打 convert が転送されず全角スペース挿入に化ける）。
+ */
+export interface InputEngineLike {
+  processKey(event: KeyEvent): unknown;
+  processKeyUp(event: KeyEvent): unknown;
+  getState(): {
+    composingKana: string;
+    pendingDisplay: string;
+    inputMode: string;
+    isComposing: boolean;
+  };
+  takeConfirmedText(): string;
+  reset(): void;
+  onStateChange: (() => void) | null;
+  onHostAction: ((action: { type: string }) => boolean) | null;
+  /** chord 系の配列か（同時打鍵）。Shift をかな面に使いうるので、Shift+英字の英字合成を避ける判定に使う */
+  isChord?: boolean;
+}
+
+/** createFep が返すセッションオブジェクト（公開 API 契約） */
+export interface FepSession {
+  /** セッションが ON か */
+  readonly active: boolean;
+  /** ON/OFF を切り替える。OFF は未確定を破棄する。戻り値 = 新しい active */
+  setActive(on: boolean): boolean;
+  toggle(): boolean;
+  /** keydown 1 個を消費する。true = 飲んだ（ホスト/ゲストへ送らない → preventDefault） */
+  feed(e: KeyTap): boolean;
+  /** keyup を消費する（SandS の単打 convert が発火する）。内蔵ローマ字経路は常に false */
+  feedUp(e: KeyTap): boolean;
+  /**
+   * サジェストの取得を止める / 再開する（v0.22.0+）。既定 = 有効（cb.suggest がある場合）。
+   * **打鍵のたびに cb.convert を呼ぶ**ので、候補バーを出していない間はホストが切ってよい。
+   */
+  setSuggest(on: boolean): void;
+  /**
+   * サジェスト（よみ入力中の候補）の n 番目を選んで確定する（v0.22.0+）。
+   * cb.suggest で受け取った配列の添字を渡す。**保持した結果を候補選択状態へ昇格させて
+   * から部分確定する**ので、変換は走り直さない。選んだ語がよみ全体を覆っていなければ、
+   * 残りは候補選択状態で続く（cb.commit → cb.show の順）。
+   * cb.suggest 未提供・候補選択中・範囲外・よみが動いた後は false。
+   */
+  commitSuggestion(index: number): boolean;
+  /**
+   * 非キーボード入力フロント（フリック等）からの機能キー（v0.21.0+）。
+   * **配列エンジンを通さない**ぶんが feed との違い。フリックの「変換」は
+   * `{key:" ", code:"Space"}` として届くので、chord 配列（薙刀式は Space = holder1）を
+   * 挿していると feed 経由では役に食われて変換できない。印字キーは扱わない
+   * （かなは insertKana）。戻り値の意味は feed と同じ（false = ホストの編集操作へ）。
+   */
+  feedDirect(e: KeyTap): boolean;
+  /**
+   * 注目文節までを確定し、**残りを候補選択状態のまま残す**（v0.21.0+）。
+   * 候補をタップで選ぶ入力フロント（フリック等）の作法 —— iOS / Android の日本語入力と
+   * 同じく、タップした時点でその文節が確定して次の文節へ進む。
+   * 最後の文節なら全体確定と同じ。候補選択中でなければ false。
+   * cb.commit → cb.show（残り）の順で呼ばれる。**確定アンドゥの対象外**。
+   */
+  commitFocused(): boolean;
+  /**
+   * 配列エンジン（KeymapEngine の InputEngine）を注入する。null = 内蔵ローマ字。
+   * engine.onStateChange → fep.pumpEngine() の配線はホスト側で行うこと。
+   */
+  setEngine(engine: InputEngineLike | null, keyOf?: KeyEventOf | null): void;
+  /** engine.onStateChange（chord 窓満了）から呼ぶ */
+  pumpEngine(): void;
+  /**
+   * 候補選択中（Phase 2）に注目文節の候補を直接選択する（v0.5.0+）。
+   * ホストが候補 UI の数字キー/クリックから呼ぶ。範囲外・非 Phase 2 は false（現状維持）。
+   */
+  selectCandidate(index: number): boolean;
+  /**
+   * 確定アンドゥ（v0.9.0+、標準 IME の Ctrl+BS 相当。セッションも Ctrl+BS を内部割当）。
+   * cb.retract の末尾一致が通ったときだけ成立し、学習も cb.unlearn で巻き戻る。
+   */
+  undoCommit(): boolean;
+  /**
+   * 再変換（v0.10.0+）: 確定済みの表記を候補選択状態として開き直す。ホストは呼ぶ前に
+   * 文書から該当テキストを取り除いておく（false 時の復元もホスト責務）。cb.reconvert 必須。
+   */
+  reconvert(surface: string): Promise<boolean>;
+  /**
+   * かな直接注入（v0.13.0+、フリック等の非キーボード入力フロント用）。
+   * idle = 合成開始 / 合成中 = 末尾 replaceCount 字を置換して連結（postModify の 1 字置換等）/
+   * 候補選択中 = 現候補を確定して新規合成 / よみ復帰中 = 連結。
+   * 候補選択中の置換・末尾字数を超える置換・engine（配列）合成中は false（現状維持）。
+   */
+  insertKana(kana: string, replaceCount?: number): boolean;
+  /**
+   * 二層目の展開（v0.14.0+）: 注目文節の隠れた候補（FoldOptions で切り出した残り）を
+   * 通常の候補巡回に加える。ホストが候補 UI の「もっと見る」やキーから呼ぶ
+   * （どのキーで呼ぶかはホストの方針 — selectCandidate と同じくキー routing には関与しない）。
+   * 既に展開済み・二層化なし・非 Phase 2 は false（現状維持）。
+   */
+  expandCandidates(): boolean;
+  /**
+   * 二層目の折り畳み（v0.14.0+）: expandCandidates() を取り消して一層目に戻す。
+   * **閉じる前の選択位置が一層目に収まるならそれを保ち**（二層目で見つけて選んだものが
+   * 一層目にもあるなら持ち帰る）、収まらないときだけ展開した時点の位置へ戻す。
+   * 未展開・非 Phase 2 は false（現状維持）。
+   */
+  collapseCandidates(): boolean;
+  /**
+   * 二層化設定の差し替え（v0.14.0+）。null = 二層化を止める。
+   * 表示中の候補にも即座に反映される（設定 UI から変えたときに再変換を要求しない）。
+   * 巡回範囲の外に出た選択位置は先頭へ戻る。
+   */
+  setFold(opts: FoldOptions | null): void;
+  reset(): void;
+}
+
+/**
+ * 変換セッションを作る。
+ * opts.fold を渡すと候補を二層化する（省略 = 従来どおり全候補を 1 つの流れで巡回）。
+ */
+export function createFep(cb: SessionCallbacks, opts?: { fold?: FoldOptions }): FepSession;
+
+/** 内蔵ローマ字リゾルバ（テスト・診断用に公開） */
+export function resolveRomaji(kana: string, pend: string, flush: boolean): { kana: string; pend: string };
+
+/** フォールバック変換（よみ 1 文節・カタカナ/ひらがな巡回） */
+export function fallbackConvert(yomi: string): ConvertSegment[];
+
+/** このバンドルのバージョン（取り込み側が記録する用） */
+export const version: string;
+
+// ---- hechima-worker（へちま蔓 v0）。仕様の正典: docs/hechima-protocol.md ----
+
+/** へちま蔓プロトコル版数（ready.protocol と一致する） */
+export const HECHIMA_PROTOCOL_VERSION: number;
+
+/** 変換結果の 1 文節（へちま蔓ペイロード）。key = よみ、candidates = 候補（先頭が第一候補） */
+export interface WireSegment {
+  key: string;
+  candidates: string[];
+  /**
+   * candidates と同じ長さ・同じ順の変換コスト（v0.14.0+、小さいほど上位）。
+   * エンジンが返さないなら省略される（受け手は「コスト不明」= 二層化しない、として扱う）。
+   */
+  costs?: number[];
+}
+
+/** ホスト → Worker: 初期化。パスは worker スクリプト位置からの相対 URL（省略 = ./hechima-wasm.js / ./mozc.data）。learning 省略 = true、scope 省略 = "default"（v0.8.0+） */
+export interface InitRequest { type: "init"; wasmJs?: string; dataUrl?: string; learning?: boolean; scope?: string }
+/** ホスト → Worker: かな漢字変換 */
+export interface ConvertRequest { type: "convert"; id: number; kana: string; maxCands?: number }
+/** ホスト → Worker: 文節伸縮（worker が接続固有状態から境界制約に翻訳。v0.7.0+ はステートレス wasm 経由） */
+export interface ResizeRequest { type: "resize"; id: number; segIdx: number; offset: number; maxCands?: number }
+/** ホスト → Worker: 確定内容の学習（v0.8.0+。値はエンジン中立 = 表示値） */
+export interface LearnRequest { type: "learn"; id: number; kana: string; sizes: number[]; values: string[] }
+/** ホスト → Worker: OPFS の学習保存分を削除（v0.8.0+） */
+export interface ClearLearningRequest { type: "clearLearning"; id: number }
+/** ホスト → Worker: 直近の learn の取り消し（v0.9.0+。確定アンドゥの学習巻き戻し） */
+export interface RevertRequest { type: "revert"; id: number }
+/** ホスト → Worker: 再変換（v0.10.0+。表記 → 逆変換でよみ → 変換。応答は result で keys がよみ） */
+export interface ReconvertRequest { type: "reconvert"; id: number; surface: string; maxCands?: number }
+/** 区切りの異なる経路の列挙（v0.23.0+。hechima_paths 入りの wasm が要る）。ステートレス */
+export interface PathsRequest { type: "paths"; id: number; kana: string; maxPaths?: number; expand?: number }
+export type WorkerRequest = InitRequest | ConvertRequest | ResizeRequest | ReconvertRequest | PathsRequest | LearnRequest | ClearLearningRequest | RevertRequest | DictListRequest | DictAddRequest | DictRemoveRequest;
+
+/** Worker → ホスト: 辞書ダウンロード進捗（total 不明時は 0） */
+export interface ProgressMessage { type: "progress"; loaded: number; total: number }
+/** Worker → ホスト: 初期化完了。features.learn = 学習可、persist = OPFS 永続化可（v0.8.0+） */
+export interface ReadyMessage { type: "ready"; protocol: number; version: string; features: { resize: boolean; learn?: boolean; persist?: boolean; dict?: boolean; paths?: boolean } }
+/** Worker → ホスト: 初期化失敗 */
+export interface ErrorMessage { type: "error"; message: string }
+/** Worker → ホスト: convert / resize の結果。segments null = 結果なし（error は診断用付帯） */
+export interface ResultMessage { type: "result"; id: number; segments: WireSegment[] | null; error?: string }
+/** Worker → ホスト: learn / clearLearning の結果（v0.8.0+） */
+export interface LearnedMessage { type: "learned"; id: number; ok: boolean }
+/** ユーザー辞書の 1 項目（v0.11.0+。pos = Mozc PosType: 名詞1/固有名詞4/人名5/地名9 等） */
+export interface DictEntry { reading: string; word: string; pos: number }
+/** ホスト → Worker: 辞書一覧 / 登録 / 削除（v0.11.0+。応答は dict = 更新後の一覧） */
+export interface DictListRequest { type: "dictList"; id: number }
+export interface DictAddRequest { type: "dictAdd"; id: number; reading: string; word: string; pos?: number }
+export interface DictRemoveRequest { type: "dictRemove"; id: number; index: number }
+/** Worker → ホスト: 辞書操作の結果（entries = 一覧。失敗は null + error） */
+export interface DictMessage { type: "dict"; id: number; entries: DictEntry[] | null; error?: string }
+/**
+ * 1 本の経路 = 1 つの区切り方（v0.23.0+）。cost は Mozc の経路コスト（小さいほど良い。較正された確率ではない）。
+ * base = 通常の変換が選ぶ区切り。sizes = 各文節のよみの長さ（コードポイント）
+ */
+export interface WirePath { base: boolean; cost: number; sizes: number[]; segments: { key: string; value: string }[] }
+/** paths の結果。null = 未対応の wasm・失敗・未初期化 */
+export interface PathsMessage { type: "paths"; id: number; paths: WirePath[] | null; error?: string }
+export type WorkerResponse = ProgressMessage | ReadyMessage | ErrorMessage | ResultMessage | LearnedMessage | DictMessage | PathsMessage;
+
+/** Worker の構造互換（DOM の Worker がそのまま渡せる） */
+export interface HechimaWorkerLike {
+  postMessage(m: WorkerRequest): void;
+  addEventListener(type: "message", listener: (ev: { data: WorkerResponse }) => void): void;
+}
+
+export interface ConnectWorkerOptions {
+  /** 文節あたりの最大候補数（既定 9） */
+  maxCands?: number;
+  /** 辞書ダウンロード進捗 */
+  onProgress?: (loaded: number, total: number) => void;
+}
+
+export interface WorkerInitPaths {
+  wasmJs?: string;
+  dataUrl?: string;
+  /** 学習（記録 + OPFS 永続化）。省略 = true（v0.8.0+） */
+  learning?: boolean;
+  /** 学習の保存スコープ（OPFS ディレクトリ名）。省略 = "default"（v0.8.0+） */
+  scope?: string;
+}
+
+/** init 完了時の情報（ready メッセージの中身） */
+export interface ReadyInfo {
+  protocol: number;
+  version: string;
+  features: { resize: boolean; learn?: boolean; persist?: boolean; dict?: boolean; paths?: boolean };
+}
+
+export interface WorkerConnection {
+  /** 初期化を開始する。2 回目以降は最初の Promise を返す */
+  init(paths?: WorkerInitPaths): Promise<ReadyInfo>;
+  /** かな→文節/候補。ready まで待機して送る。失敗・init 失敗時は null（cb.convert 互換） */
+  convert(yomi: string): Promise<ConvertSegment[] | null>;
+  /** 文節伸縮。wasm 未対応（features.resize=false）・失敗時は null（cb.resize 互換） */
+  resize(segmentIndex: number, offset: number): Promise<ConvertSegment[] | null>;
+  /** 確定内容の学習（v0.8.0+）。true = 学習した（対応が取れない場合は false = 無害な no-op） */
+  learn(segments: { key: string; value: string }[]): Promise<boolean>;
+  /** 再変換（v0.10.0+、cb.reconvert 互換）。不能・未対応は null */
+  reconvert(surface: string): Promise<ConvertSegment[] | null>;
+  /** 区切りの異なる経路の列挙（v0.23.0+）。features.paths=false の wasm・失敗は null */
+  paths(kana: string, opts?: { maxPaths?: number; expand?: number }): Promise<WirePath[] | null>;
+  /** 直近の learn の取り消し（v0.9.0+ = 確定アンドゥの学習巻き戻し） */
+  revert(): Promise<boolean>;
+  /** OPFS の学習保存分を削除（v0.8.0+。メモリ内の学習は再ロードまで残る） */
+  clearLearning(): Promise<boolean>;
+  /** ユーザー辞書の一覧（v0.11.0+）。未対応は null */
+  dictList(): Promise<DictEntry[] | null>;
+  /** ユーザー辞書へ登録（v0.11.0+。pos 省略 = 名詞 = 1）。成功 = 更新後の一覧 */
+  dictAdd(reading: string, word: string, pos?: number): Promise<DictEntry[] | null>;
+  /** ユーザー辞書から削除（一覧の index）。成功 = 更新後の一覧 */
+  dictRemove(index: number): Promise<DictEntry[] | null>;
+  /** createFep の cb にスプレッドできる形: { ...conn.callbacks(), show, hide, commit } */
+  callbacks(): {
+    convert: (yomi: string) => Promise<ConvertSegment[] | null>;
+    resize: (segmentIndex: number, offset: number) => Promise<ConvertSegment[] | null>;
+    reconvert: (surface: string) => Promise<ConvertSegment[] | null>;
+    learn: (segments: { key: string; value: string }[]) => void;
+    unlearn: () => void;
+  };
+}
+
+/**
+ * hechima-worker（hechima-worker.js を読んだ Worker）へ接続する。
+ * id 相関・ready 待機・resize 機能検出をここに閉じる。
+ */
+export function connectWorker(worker: HechimaWorkerLike, opts?: ConnectWorkerOptions): WorkerConnection;
+
+export as namespace Hechima;

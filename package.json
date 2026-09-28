@@ -1,0 +1,13 @@
+{
+  "name": "enoki-japanese-input",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "start": "python3 serve.py",
+    "test": "node scripts/smoke-test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

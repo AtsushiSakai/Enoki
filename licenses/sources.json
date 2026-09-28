@@ -1,0 +1,27 @@
+[
+  {
+    "file": "react-MIT.txt",
+    "url": "https://raw.githubusercontent.com/facebook/react/v19.2.4/LICENSE",
+    "sha256": "da6d3703ed11cbe42bd212c725957c98da23cbff1998c05fa4b3d976d1a58e93"
+  },
+  {
+    "file": "abseil-Apache-2.0.txt",
+    "url": "https://raw.githubusercontent.com/abseil/abseil-cpp/255c84dadd029fd8ad25c5efb5933e47beaa00c7/LICENSE",
+    "sha256": "c79a7fea0e3cac04cd43f20e7b648e5a0ff8fa5344e644b0ee09ca1162b62747"
+  },
+  {
+    "file": "protobuf-BSD.txt",
+    "url": "https://raw.githubusercontent.com/protocolbuffers/protobuf/4b0c3aacf0657fbf38253b38918d3358dd4319ec/LICENSE",
+    "sha256": "6e5e117324afd944dcf67f36cf329843bc1a92229a8cd9bb573d7a83130fea7d"
+  },
+  {
+    "file": "fcitx5-mozc-BSD.txt",
+    "url": "https://raw.githubusercontent.com/fcitx-contrib/fcitx5-mozc/522a5f22673e03e32bcb290ba729bab42fbc5c18/LICENSE",
+    "sha256": "d237c49c66d2627a7184e750ad815b4d204b5039e16bb8122fc84d356231e1ff"
+  },
+  {
+    "file": "emscripten-LICENSE.txt",
+    "url": "https://raw.githubusercontent.com/emscripten-core/emscripten/3.1.69/LICENSE",
+    "sha256": "620a78084fc7ca97c0b5dea9abf891f3ffcadfdbf305276f099c9c4e12fc1d86"
+  }
+]

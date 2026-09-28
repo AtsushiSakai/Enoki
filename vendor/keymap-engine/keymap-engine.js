@@ -1,0 +1,4574 @@
+(function(global, factory) {
+	typeof exports === "object" && typeof module !== "undefined" ? factory(exports) : typeof define === "function" && define.amd ? define(["exports"], factory) : (global = typeof globalThis !== "undefined" ? globalThis : global || self, factory(global.KeymapEngine = {}));
+})(this, function(exports) {
+	Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
+	//#region \0rolldown/runtime.js
+	var __commonJSMin = (cb, mod) => () => (mod || (cb((mod = { exports: {} }).exports, mod), cb = null), mod.exports);
+	//#endregion
+	//#region src/engine/hid-key-codes.ts
+	/** Named HID key codes (USB HID Usage Tables) */
+	const HID = {
+		A: 4,
+		B: 5,
+		C: 6,
+		D: 7,
+		E: 8,
+		F: 9,
+		G: 10,
+		H: 11,
+		I: 12,
+		J: 13,
+		K: 14,
+		L: 15,
+		M: 16,
+		N: 17,
+		O: 18,
+		P: 19,
+		Q: 20,
+		R: 21,
+		S: 22,
+		T: 23,
+		U: 24,
+		V: 25,
+		W: 26,
+		X: 27,
+		Y: 28,
+		Z: 29,
+		DIGIT_1: 30,
+		DIGIT_2: 31,
+		DIGIT_3: 32,
+		DIGIT_4: 33,
+		DIGIT_5: 34,
+		DIGIT_6: 35,
+		DIGIT_7: 36,
+		DIGIT_8: 37,
+		DIGIT_9: 38,
+		DIGIT_0: 39,
+		ENTER: 40,
+		ESCAPE: 41,
+		BACKSPACE: 42,
+		TAB: 43,
+		SPACE: 44,
+		HYPHEN: 45,
+		EQUAL: 46,
+		BRACKET_LEFT: 47,
+		BRACKET_RIGHT: 48,
+		BACKSLASH: 49,
+		SEMICOLON: 51,
+		QUOTE: 52,
+		BACKQUOTE: 53,
+		COMMA: 54,
+		PERIOD: 55,
+		SLASH: 56,
+		CAPS_LOCK: 57,
+		F1: 58,
+		F2: 59,
+		F3: 60,
+		F4: 61,
+		F5: 62,
+		F6: 63,
+		F7: 64,
+		F8: 65,
+		F9: 66,
+		F10: 67,
+		F11: 68,
+		F12: 69,
+		ARROW_RIGHT: 79,
+		ARROW_LEFT: 80,
+		ARROW_DOWN: 81,
+		ARROW_UP: 82,
+		DELETE_FORWARD: 76,
+		HOME: 74,
+		END: 77,
+		PAGE_UP: 75,
+		PAGE_DOWN: 78,
+		INTERNATIONAL_1: 135,
+		INTERNATIONAL_2: 136,
+		INTERNATIONAL_3: 137,
+		INTERNATIONAL_4: 138,
+		INTERNATIONAL_5: 139,
+		LANG1: 144,
+		LANG2: 145,
+		RIGHT_ALT: 230
+	};
+	/** Browser KeyboardEvent.code → HID key code */
+	const CODE_TO_HID = {
+		KeyA: HID.A,
+		KeyB: HID.B,
+		KeyC: HID.C,
+		KeyD: HID.D,
+		KeyE: HID.E,
+		KeyF: HID.F,
+		KeyG: HID.G,
+		KeyH: HID.H,
+		KeyI: HID.I,
+		KeyJ: HID.J,
+		KeyK: HID.K,
+		KeyL: HID.L,
+		KeyM: HID.M,
+		KeyN: HID.N,
+		KeyO: HID.O,
+		KeyP: HID.P,
+		KeyQ: HID.Q,
+		KeyR: HID.R,
+		KeyS: HID.S,
+		KeyT: HID.T,
+		KeyU: HID.U,
+		KeyV: HID.V,
+		KeyW: HID.W,
+		KeyX: HID.X,
+		KeyY: HID.Y,
+		KeyZ: HID.Z,
+		Digit1: HID.DIGIT_1,
+		Digit2: HID.DIGIT_2,
+		Digit3: HID.DIGIT_3,
+		Digit4: HID.DIGIT_4,
+		Digit5: HID.DIGIT_5,
+		Digit6: HID.DIGIT_6,
+		Digit7: HID.DIGIT_7,
+		Digit8: HID.DIGIT_8,
+		Digit9: HID.DIGIT_9,
+		Digit0: HID.DIGIT_0,
+		Enter: HID.ENTER,
+		Escape: HID.ESCAPE,
+		Backspace: HID.BACKSPACE,
+		Tab: HID.TAB,
+		Space: HID.SPACE,
+		Minus: HID.HYPHEN,
+		Equal: HID.EQUAL,
+		BracketLeft: HID.BRACKET_LEFT,
+		BracketRight: HID.BRACKET_RIGHT,
+		Backslash: HID.BACKSLASH,
+		Semicolon: HID.SEMICOLON,
+		Quote: HID.QUOTE,
+		Backquote: HID.BACKQUOTE,
+		Comma: HID.COMMA,
+		Period: HID.PERIOD,
+		Slash: HID.SLASH,
+		CapsLock: HID.CAPS_LOCK,
+		F1: HID.F1,
+		F2: HID.F2,
+		F3: HID.F3,
+		F4: HID.F4,
+		F5: HID.F5,
+		F6: HID.F6,
+		F7: HID.F7,
+		F8: HID.F8,
+		F9: HID.F9,
+		F10: HID.F10,
+		F11: HID.F11,
+		F12: HID.F12,
+		ArrowRight: HID.ARROW_RIGHT,
+		ArrowLeft: HID.ARROW_LEFT,
+		ArrowDown: HID.ARROW_DOWN,
+		ArrowUp: HID.ARROW_UP,
+		Delete: HID.DELETE_FORWARD,
+		Home: HID.HOME,
+		End: HID.END,
+		PageUp: HID.PAGE_UP,
+		PageDown: HID.PAGE_DOWN,
+		IntlRo: HID.INTERNATIONAL_1,
+		IntlYen: HID.INTERNATIONAL_3,
+		NonConvert: HID.INTERNATIONAL_5,
+		Convert: HID.INTERNATIONAL_4,
+		Lang1: HID.LANG1,
+		Lang2: HID.LANG2,
+		AltRight: HID.RIGHT_ALT
+	};
+	function browserCodeToHID(code) {
+		return CODE_TO_HID[code];
+	}
+	/** HID usage name (JSON keymap format) → HID key code */
+	const NAME_TO_HID = {
+		a: HID.A,
+		b: HID.B,
+		c: HID.C,
+		d: HID.D,
+		e: HID.E,
+		f: HID.F,
+		g: HID.G,
+		h: HID.H,
+		i: HID.I,
+		j: HID.J,
+		k: HID.K,
+		l: HID.L,
+		m: HID.M,
+		n: HID.N,
+		o: HID.O,
+		p: HID.P,
+		q: HID.Q,
+		r: HID.R,
+		s: HID.S,
+		t: HID.T,
+		u: HID.U,
+		v: HID.V,
+		w: HID.W,
+		x: HID.X,
+		y: HID.Y,
+		z: HID.Z,
+		"1": HID.DIGIT_1,
+		"2": HID.DIGIT_2,
+		"3": HID.DIGIT_3,
+		"4": HID.DIGIT_4,
+		"5": HID.DIGIT_5,
+		"6": HID.DIGIT_6,
+		"7": HID.DIGIT_7,
+		"8": HID.DIGIT_8,
+		"9": HID.DIGIT_9,
+		"0": HID.DIGIT_0,
+		enter: HID.ENTER,
+		escape: HID.ESCAPE,
+		backspace: HID.BACKSPACE,
+		delete: HID.DELETE_FORWARD,
+		tab: HID.TAB,
+		space: HID.SPACE,
+		capsLock: HID.CAPS_LOCK,
+		hyphen: HID.HYPHEN,
+		equal: HID.EQUAL,
+		bracketLeft: HID.BRACKET_LEFT,
+		bracketRight: HID.BRACKET_RIGHT,
+		backslash: HID.BACKSLASH,
+		semicolon: HID.SEMICOLON,
+		quote: HID.QUOTE,
+		backquote: HID.BACKQUOTE,
+		comma: HID.COMMA,
+		period: HID.PERIOD,
+		slash: HID.SLASH,
+		arrowRight: HID.ARROW_RIGHT,
+		arrowLeft: HID.ARROW_LEFT,
+		arrowDown: HID.ARROW_DOWN,
+		arrowUp: HID.ARROW_UP,
+		home: HID.HOME,
+		end: HID.END,
+		pageUp: HID.PAGE_UP,
+		pageDown: HID.PAGE_DOWN,
+		f1: HID.F1,
+		f2: HID.F2,
+		f3: HID.F3,
+		f4: HID.F4,
+		f5: HID.F5,
+		f6: HID.F6,
+		f7: HID.F7,
+		f8: HID.F8,
+		f9: HID.F9,
+		f10: HID.F10,
+		f11: HID.F11,
+		f12: HID.F12,
+		international1: HID.INTERNATIONAL_1,
+		international2: HID.INTERNATIONAL_2,
+		international3: HID.INTERNATIONAL_3,
+		international4: HID.INTERNATIONAL_4,
+		international5: HID.INTERNATIONAL_5,
+		nonConvert: HID.INTERNATIONAL_5,
+		convert: HID.INTERNATIONAL_4,
+		lang1: HID.LANG1,
+		lang2: HID.LANG2,
+		rightAlt: HID.RIGHT_ALT
+	};
+	function hidNameToCode(name) {
+		return NAME_TO_HID[name];
+	}
+	/** HID key code → usage name */
+	const HID_TO_NAME = {};
+	for (const [name, code] of Object.entries(NAME_TO_HID)) HID_TO_NAME[code] = name;
+	function hidCodeToName(code) {
+		return HID_TO_NAME[code];
+	}
+	/** HID key code → browser KeyboardEvent.code (reverse of CODE_TO_HID) */
+	const HID_TO_BROWSER$1 = {};
+	for (const [code, hid] of Object.entries(CODE_TO_HID)) if (!HID_TO_BROWSER$1[hid]) HID_TO_BROWSER$1[hid] = code;
+	/** HID usage name → browser code */
+	function hidNameToBrowserCode(name) {
+		const hid = NAME_TO_HID[name];
+		return hid !== void 0 ? HID_TO_BROWSER$1[hid] : void 0;
+	}
+	const HID_TO_US_LEGEND = {
+		[HID.A]: "a",
+		[HID.B]: "b",
+		[HID.C]: "c",
+		[HID.D]: "d",
+		[HID.E]: "e",
+		[HID.F]: "f",
+		[HID.G]: "g",
+		[HID.H]: "h",
+		[HID.I]: "i",
+		[HID.J]: "j",
+		[HID.K]: "k",
+		[HID.L]: "l",
+		[HID.M]: "m",
+		[HID.N]: "n",
+		[HID.O]: "o",
+		[HID.P]: "p",
+		[HID.Q]: "q",
+		[HID.R]: "r",
+		[HID.S]: "s",
+		[HID.T]: "t",
+		[HID.U]: "u",
+		[HID.V]: "v",
+		[HID.W]: "w",
+		[HID.X]: "x",
+		[HID.Y]: "y",
+		[HID.Z]: "z",
+		[HID.DIGIT_1]: "1",
+		[HID.DIGIT_2]: "2",
+		[HID.DIGIT_3]: "3",
+		[HID.DIGIT_4]: "4",
+		[HID.DIGIT_5]: "5",
+		[HID.DIGIT_6]: "6",
+		[HID.DIGIT_7]: "7",
+		[HID.DIGIT_8]: "8",
+		[HID.DIGIT_9]: "9",
+		[HID.DIGIT_0]: "0",
+		[HID.HYPHEN]: "-",
+		[HID.EQUAL]: "=",
+		[HID.BRACKET_LEFT]: "[",
+		[HID.BRACKET_RIGHT]: "]",
+		[HID.BACKSLASH]: "\\",
+		[HID.SEMICOLON]: ";",
+		[HID.QUOTE]: "'",
+		[HID.BACKQUOTE]: "`",
+		[HID.COMMA]: ",",
+		[HID.PERIOD]: ".",
+		[HID.SLASH]: "/"
+	};
+	/** HID コード → US 刻印の 1 文字。表に無ければ undefined */
+	function hidToUsLegend(code) {
+		return HID_TO_US_LEGEND[code];
+	}
+	//#endregion
+	//#region src/engine/diagnostics.ts
+	/** 診断を配列に溜めるだけの sink（テストと、まとめて受け取りたいホスト向け） */
+	function collectDiagnostics() {
+		const items = [];
+		return {
+			sink: (d) => items.push(d),
+			items
+		};
+	}
+	const REASON_TO_CODE = {
+		"not-allowed-here": "action-not-allowed-here",
+		unsupported: "action-unsupported",
+		unknown: "action-unknown",
+		extension: "action-extension-ignored",
+		"bad-param": "action-bad-param"
+	};
+	const REASON_TO_MESSAGE = {
+		"not-allowed-here": "この面では書けないアクションです",
+		unsupported: "このランタイムに実装が無いアクションです",
+		unknown: "未知のアクション名です",
+		extension: "アプリ固有アクション（x-）なので無視しました",
+		"bad-param": "アクションのパラメータが不正です"
+	};
+	/** parseKeyActionResult の reason を診断に変換して報告する */
+	function reportActionRejection(sink, reason, where, key, value) {
+		if (!sink) return;
+		sink({
+			code: REASON_TO_CODE[reason],
+			message: `${REASON_TO_MESSAGE[reason]}: "${value}"（${where} の ${key}）`,
+			where,
+			key,
+			value
+		});
+	}
+	//#endregion
+	//#region src/engine/gamepad-kana-table.ts
+	/** LT後置シフトマップ: 子音かな→拗音, 母音→小書き */
+	const YOUON_POSTSHIFT_MAP = /* @__PURE__ */ new Map([
+		["あ", "ぁ"],
+		["い", "ぃ"],
+		["う", "ぅ"],
+		["え", "ぇ"],
+		["お", "ぉ"],
+		["や", "ゃ"],
+		["ゆ", "ゅ"],
+		["よ", "ょ"],
+		["わ", "ゎ"],
+		["か", "きゃ"],
+		["く", "きゅ"],
+		["こ", "きょ"],
+		["さ", "しゃ"],
+		["す", "しゅ"],
+		["そ", "しょ"],
+		["た", "ちゃ"],
+		["つ", "ちゅ"],
+		["と", "ちょ"],
+		["な", "にゃ"],
+		["ぬ", "にゅ"],
+		["の", "にょ"],
+		["は", "ひゃ"],
+		["ふ", "ひゅ"],
+		["ほ", "ひょ"],
+		["ま", "みゃ"],
+		["む", "みゅ"],
+		["も", "みょ"],
+		["ら", "りゃ"],
+		["る", "りゅ"],
+		["ろ", "りょ"],
+		["が", "ぎゃ"],
+		["ぐ", "ぎゅ"],
+		["ご", "ぎょ"],
+		["ざ", "じゃ"],
+		["ず", "じゅ"],
+		["ぞ", "じょ"],
+		["だ", "ぢゃ"],
+		["づ", "ぢゅ"],
+		["ど", "ぢょ"],
+		["ば", "びゃ"],
+		["ぶ", "びゅ"],
+		["ぼ", "びょ"],
+		["ぱ", "ぴゃ"],
+		["ぷ", "ぴゅ"],
+		["ぽ", "ぴょ"]
+	]);
+	/** 濁点変換マップ */
+	const DAKUTEN_MAP = /* @__PURE__ */ new Map([
+		["か", "が"],
+		["き", "ぎ"],
+		["く", "ぐ"],
+		["け", "げ"],
+		["こ", "ご"],
+		["さ", "ざ"],
+		["し", "じ"],
+		["す", "ず"],
+		["せ", "ぜ"],
+		["そ", "ぞ"],
+		["た", "だ"],
+		["ち", "ぢ"],
+		["つ", "づ"],
+		["て", "で"],
+		["と", "ど"],
+		["は", "ば"],
+		["ひ", "び"],
+		["ふ", "ぶ"],
+		["へ", "べ"],
+		["ほ", "ぼ"],
+		["う", "ゔ"]
+	]);
+	/** 半濁点変換マップ */
+	const HANDAKUTEN_MAP = /* @__PURE__ */ new Map([
+		["は", "ぱ"],
+		["ひ", "ぴ"],
+		["ふ", "ぷ"],
+		["へ", "ぺ"],
+		["ほ", "ぽ"]
+	]);
+	/** 濁点逆引き（濁音→清音） */
+	const DAKUTEN_REVERSE = new Map([...DAKUTEN_MAP.entries()].map(([k, v]) => [v, k]));
+	/** 半濁点逆引き（半濁音→清音） */
+	const HANDAKUTEN_REVERSE = new Map([...HANDAKUTEN_MAP.entries()].map(([k, v]) => [v, k]));
+	//#endregion
+	//#region src/engine/postmodify.ts
+	const POST_MODIFY_OPS = [
+		"cycle",
+		"cycleDakuten",
+		"dakuten",
+		"handakuten",
+		"small"
+	];
+	/**
+	* サイクルの既定表。iOS 標準 12 キーの「゛゜小」と同系列（押すたびに次へ、末尾 → 先頭）。
+	* flickmap は `postModifyCycles` で完全置換できる。
+	*/
+	const DEFAULT_POST_MODIFY_CYCLES = [
+		"かが",
+		"きぎ",
+		"くぐ",
+		"けげ",
+		"こご",
+		"さざ",
+		"しじ",
+		"すず",
+		"せぜ",
+		"そぞ",
+		"ただ",
+		"ちぢ",
+		"つっづ",
+		"てで",
+		"とど",
+		"はばぱ",
+		"ひびぴ",
+		"ふぶぷ",
+		"へべぺ",
+		"ほぼぽ",
+		"あぁ",
+		"いぃ",
+		"うぅゔ",
+		"えぇ",
+		"おぉ",
+		"やゃ",
+		"ゆゅ",
+		"よょ",
+		"わゎ"
+	];
+	/** tail（末尾 1 字）の次のトグル字。どのサイクルにも無ければ null */
+	function nextPostModify(tail, cycles) {
+		for (const cycle of cycles) {
+			const chars = Array.from(cycle);
+			const i = chars.indexOf(tail);
+			if (i >= 0) return chars[(i + 1) % chars.length];
+		}
+		return null;
+	}
+	/**
+	* 濁点キー（方向つき）。清音↔濁音のトグルで、半濁音からは濁音へ。
+	*
+	* - か→が / が→か（トグル）
+	* - は→ば / ば→は（トグル）
+	* - ぱ→ば（半濁点を濁点に差し替え）
+	*/
+	function applyDakuten(tail) {
+		const seionFromHandakuten = HANDAKUTEN_REVERSE.get(tail);
+		if (seionFromHandakuten) return DAKUTEN_MAP.get(seionFromHandakuten) ?? seionFromHandakuten;
+		const seionFromDakuten = DAKUTEN_REVERSE.get(tail);
+		if (seionFromDakuten) return seionFromDakuten;
+		return DAKUTEN_MAP.get(tail) ?? null;
+	}
+	/**
+	* 半濁点キー（方向つき）。清音↔半濁音のトグルで、濁音からは半濁音へ。
+	*
+	* - は→ぱ / ぱ→は（トグル）
+	* - ば→ぱ（濁点を半濁点に差し替え）
+	*/
+	function applyHandakuten(tail) {
+		const seionFromHandakuten = HANDAKUTEN_REVERSE.get(tail);
+		if (seionFromHandakuten) return seionFromHandakuten;
+		const seion = DAKUTEN_REVERSE.get(tail) ?? tail;
+		return HANDAKUTEN_MAP.get(seion) ?? null;
+	}
+	/**
+	* 濁点キー 1 本で全部を回す（か→が→か / は→ば→ぱ→は）。
+	* ゲームパッド経路が従来から使っている挙動。
+	*/
+	function cycleDakuten(tail) {
+		const seionFromHandakuten = HANDAKUTEN_REVERSE.get(tail);
+		if (seionFromHandakuten) return seionFromHandakuten;
+		const seionFromDakuten = DAKUTEN_REVERSE.get(tail);
+		if (seionFromDakuten) return HANDAKUTEN_MAP.get(seionFromDakuten) ?? seionFromDakuten;
+		return DAKUTEN_MAP.get(tail) ?? null;
+	}
+	/** 小書きをトグルする（や↔ゃ） */
+	function applySmall(tail) {
+		return YOUON_POSTSHIFT_MAP.get(tail) ?? null;
+	}
+	/**
+	* 末尾 1 字に後置変調を適用した結果を返す。適用できなければ null。
+	*
+	* **対象は「合成テキストの末尾 1 字」で、その正は合成テキストの所有者が持つ**
+	* （docs/keymap-v2-requirements.md D4）。呼び出し側が所有者から末尾を取って渡すこと。
+	*/
+	function postModify(tail, op, cycles = DEFAULT_POST_MODIFY_CYCLES) {
+		switch (op) {
+			case "cycle": return nextPostModify(tail, cycles);
+			case "cycleDakuten": return cycleDakuten(tail);
+			case "dakuten": return applyDakuten(tail);
+			case "handakuten": return applyHandakuten(tail);
+			case "small": return applySmall(tail);
+		}
+	}
+	//#endregion
+	//#region src/engine/key-action-parser.ts
+	const FULL_VOCAB = [
+		"convert",
+		"confirm",
+		"cancel",
+		"deleteBack",
+		"moveLeft",
+		"moveRight",
+		"moveUp",
+		"moveDown",
+		"editSegmentLeft",
+		"editSegmentRight",
+		"switchToEnglish",
+		"switchToJapanese",
+		"toggleInputMode",
+		"insertAndConfirm",
+		"directInsert",
+		"insertSpace",
+		"postModify",
+		"pass"
+	];
+	const SURFACE_VOCAB = {
+		"keymap.specialActions": FULL_VOCAB,
+		"keymap.englishSpecialActions": FULL_VOCAB,
+		"keymap.singleTapAction": FULL_VOCAB,
+		"keymap.modeKeys": [
+			"switchToEnglish",
+			"switchToJapanese",
+			"toggleInputMode",
+			"postModify",
+			"pass"
+		]
+	};
+	const UNSUPPORTED_VOCAB = [
+		"convertPrev",
+		"confirmHiragana",
+		"confirmKatakana",
+		"confirmHalfWidthKatakana",
+		"confirmFullWidthRoman",
+		"confirmHalfWidthRoman",
+		"selectCandidate"
+	];
+	const PHASES = [
+		"idle",
+		"composing",
+		"selecting"
+	];
+	/** ガード付きオブジェクト形式 `{ action, when }` を素の値に分解する */
+	function unwrap(value) {
+		if (typeof value === "string") return { str: value };
+		if (typeof value !== "object" || value === null || Array.isArray(value)) return null;
+		const o = value;
+		if (typeof o.action !== "string") return null;
+		if (o.when === void 0) return { str: o.action };
+		if (!Array.isArray(o.when) || o.when.length === 0) return null;
+		if (o.when.some((p) => typeof p !== "string" || !PHASES.includes(p))) return null;
+		return {
+			str: o.action,
+			when: o.when
+		};
+	}
+	/** その局面でアクションが有効か。ガードが無ければ常に有効 */
+	function isActiveIn(when, phase) {
+		return when === void 0 || when.includes(phase);
+	}
+	/** パラメータ付きアクション（"名前:パラメータ" 形式）の組み立て */
+	function withParam(name, param) {
+		switch (name) {
+			case "insertAndConfirm": return param ? {
+				type: "insertAndConfirm",
+				text: param
+			} : null;
+			case "directInsert": return param ? {
+				type: "directInsert",
+				text: param
+			} : null;
+			case "insertSpace": return param === "shifted" ? {
+				type: "insertSpace",
+				shifted: true
+			} : null;
+			case "postModify": return POST_MODIFY_OPS.includes(param) ? {
+				type: "postModify",
+				op: param
+			} : null;
+			default: return null;
+		}
+	}
+	function withoutParam(name) {
+		switch (name) {
+			case "convert": return { type: "convert" };
+			case "confirm": return { type: "confirm" };
+			case "cancel": return { type: "cancel" };
+			case "deleteBack": return { type: "deleteBack" };
+			case "moveLeft": return { type: "moveLeft" };
+			case "moveRight": return { type: "moveRight" };
+			case "moveUp": return { type: "moveUp" };
+			case "moveDown": return { type: "moveDown" };
+			case "editSegmentLeft": return { type: "editSegmentLeft" };
+			case "editSegmentRight": return { type: "editSegmentRight" };
+			case "switchToEnglish": return { type: "switchToEnglish" };
+			case "switchToJapanese": return { type: "switchToJapanese" };
+			case "toggleInputMode": return { type: "toggleInputMode" };
+			case "insertSpace": return {
+				type: "insertSpace",
+				shifted: false
+			};
+			case "postModify": return {
+				type: "postModify",
+				op: "cycle"
+			};
+			case "pass": return { type: "pass" };
+			default: return null;
+		}
+	}
+	/**
+	* アクション文字列を KeyAction に変換し、**できなかった場合は理由を返す**。
+	*
+	* 呼び出し側はこの理由を診断（`KeymapDiagnostic`）に変換してホストへ渡す。
+	* v1.9.0 までは黙って捨てていた（`docs/keymap-v2-requirements.md` R3-4
+	* 「潰すのは許す。黙るのを禁じる」）。
+	*/
+	function parseKeyActionResult(value, surface) {
+		const unwrapped = unwrap(value);
+		if (!unwrapped) return {
+			ok: false,
+			reason: "bad-param"
+		};
+		const { str, when } = unwrapped;
+		const sep = str.indexOf(":");
+		const name = sep === -1 ? str : str.slice(0, sep);
+		const param = sep === -1 ? null : str.slice(sep + 1);
+		if (name.startsWith("x-")) return {
+			ok: false,
+			reason: "extension"
+		};
+		if (!SURFACE_VOCAB[surface].includes(name)) {
+			if (UNSUPPORTED_VOCAB.includes(name)) return {
+				ok: false,
+				reason: "unsupported"
+			};
+			return {
+				ok: false,
+				reason: Object.values(SURFACE_VOCAB).some((v) => v.includes(name)) ? "not-allowed-here" : "unknown"
+			};
+		}
+		const action = param === null ? withoutParam(name) : withParam(name, param);
+		if (action) return {
+			ok: true,
+			action,
+			when
+		};
+		return {
+			ok: false,
+			reason: "bad-param"
+		};
+	}
+	//#endregion
+	//#region src/engine/semantics.ts
+	const SUPPORTED_SEMANTICS = [
+		"behavior:sequential",
+		"behavior:chord",
+		"judgment:window",
+		"judgment:mutual",
+		"inputBase:romaji",
+		"suffixRules",
+		"keyRemap",
+		"modeKeys",
+		"chord:shiftKeys",
+		"chord:englishTables",
+		"prefixShiftKeys",
+		"requiresInput",
+		"actionGuard",
+		"postModify",
+		"roles",
+		"layouts",
+		"positionalBase",
+		"unusedPrefix:drop",
+		"pendingLabels",
+		"sequential:specialActions"
+	];
+	/**
+	* `requires` を検証する。理解できない名前が 1 つでもあればエラー。
+	*
+	* **黙って無視してはならない**カテゴリ。`extensions` / `x-` の
+	* 「安全に無視してよい」とはちょうど逆向きの契約。
+	*/
+	function assertRequiredSemantics(raw) {
+		if (raw === void 0 || raw === null) return [];
+		if (!Array.isArray(raw) || raw.some((x) => typeof x !== "string")) throw new Error("KeymapEngine: requires は文字列の配列である必要があります");
+		const unknown = raw.filter((s) => !SUPPORTED_SEMANTICS.includes(s));
+		if (unknown.length > 0) throw new Error(`KeymapEngine: 理解できないセマンティクスを要求しています: ${unknown.join(", ")}。このエンジンでは、この配列を意図どおりに動かせません`);
+		return raw;
+	}
+	//#endregion
+	//#region src/engine/types.ts
+	/** Modifier key bit flags */
+	const KeyModifierFlags = {
+		SHIFT: 1,
+		CONTROL: 2,
+		ALT: 4,
+		META: 8
+	};
+	//#endregion
+	//#region src/engine/keymap-decoder.ts
+	const KNOWN_FIELDS = /* @__PURE__ */ new Set([
+		"$schema",
+		"formatVersion",
+		"requires",
+		"requiresInput",
+		"roles",
+		"layouts",
+		"base",
+		"name",
+		"description",
+		"author",
+		"contributor",
+		"basedOn",
+		"license",
+		"addedAt",
+		"keyboardLayout",
+		"targetScript",
+		"behavior",
+		"controlBindings",
+		"inputBase",
+		"keyRemap",
+		"suffixRules",
+		"inputMappings",
+		"prefixShiftKeys",
+		"modeKeys",
+		"extensions",
+		"postModifyCycles",
+		"postModifyYouon"
+	]);
+	const IGNORED_FIELDS = /* @__PURE__ */ new Set(["controlBindings"]);
+	/** Parse a raw JSON object into a KeymapDefinition */
+	function decodeKeymap$1(json, opts = {}) {
+		assertKnownFields(json, opts);
+		const behavior = json.behavior;
+		if (!behavior || behavior.type !== "sequential" && behavior.type !== "chord") throw new Error(`Unsupported behavior type: ${behavior?.type}`);
+		const modeKeys = decodeModeKeys(json.modeKeys, opts);
+		const prefixShiftKeys = json.prefixShiftKeys;
+		const common = {
+			formatVersion: json.formatVersion || "1.0",
+			requires: assertRequiredSemantics(json.requires),
+			requiresInput: decodeInputLevel(json.requiresInput),
+			name: json.name,
+			description: json.description,
+			author: json.author,
+			contributor: json.contributor,
+			basedOn: json.basedOn,
+			license: json.license,
+			keyboardLayout: json.keyboardLayout,
+			roles: json.roles,
+			layouts: json.layouts,
+			base: decodeBase(json.base),
+			targetScript: json.targetScript,
+			inputBase: json.inputBase,
+			keyRemap: json.keyRemap,
+			suffixRules: json.suffixRules,
+			inputMappings: filterComments(json.inputMappings),
+			prefixShiftKeys,
+			modeKeys,
+			extensions: json.extensions,
+			...decodePostModifyConfig(json, opts)
+		};
+		if (behavior.type === "chord") {
+			const config = behavior.config;
+			const chordConfig = {
+				hidToKey: config.hidToKey ?? {},
+				shiftKeys: config.shiftKeys ?? [],
+				lookupTable: config.lookupTable ?? {},
+				specialActions: config.specialActions ?? {},
+				judgment: decodeJudgment(config.judgment),
+				simultaneousWindow: config.simultaneousWindow ?? .1,
+				englishLookupTable: config.englishLookupTable,
+				englishSpecialActions: config.englishSpecialActions
+			};
+			return {
+				...common,
+				behavior: {
+					type: "chord",
+					config: chordConfig
+				}
+			};
+		}
+		const characterMap = {};
+		const rawMap = behavior.characterMap;
+		if (rawMap) {
+			for (const [k, v] of Object.entries(rawMap)) if (k.length === 1 && v.length === 1) characterMap[k] = v;
+			else if (!k.startsWith("_comment")) opts.onDiagnostic?.({
+				code: "character-map-invalid",
+				message: `characterMap は 1 文字 → 1 文字である必要があります: "${k}" → "${v}"`,
+				where: "behavior.characterMap",
+				key: k,
+				value: v
+			});
+		}
+		const unusedPrefix = decodeUnusedPrefix(behavior.unusedPrefix);
+		const pendingLabels = decodePendingLabels(behavior.pendingLabels, opts);
+		return {
+			...common,
+			behavior: {
+				type: "sequential",
+				characterMap,
+				...unusedPrefix ? { unusedPrefix } : {},
+				...pendingLabels ? { pendingLabels } : {},
+				...behavior.specialActions !== void 0 ? { specialActions: behavior.specialActions } : {}
+			}
+		};
+	}
+	/**
+	* postModifyCycles / postModifyYouon（トップレベル・v2.10.0+）。
+	* サイクル表は flickmap と同じ形（文字列 = 押すたびに次の字へ）。壊れたエントリは診断して捨てる
+	*/
+	function decodePostModifyConfig(json, opts) {
+		const out = {};
+		const rawCycles = json.postModifyCycles;
+		if (rawCycles !== void 0) {
+			if (!Array.isArray(rawCycles)) throw new Error("KeymapEngine: postModifyCycles は文字列の配列である必要があります");
+			out.postModifyCycles = rawCycles.filter((c) => {
+				const ok = typeof c === "string" && [...c].length >= 2;
+				if (!ok) opts.onDiagnostic?.({
+					code: "post-modify-cycle-invalid",
+					message: `postModifyCycles の各要素は 2 文字以上の文字列である必要があります: ${JSON.stringify(c)}`,
+					where: "postModifyCycles",
+					value: String(c)
+				});
+				return ok;
+			});
+		}
+		const youon = json.postModifyYouon;
+		if (youon !== void 0) {
+			if (youon !== "tail" && youon !== "base") throw new Error(`KeymapEngine: 非対応の postModifyYouon "${String(youon)}"（"tail" / "base" のみ）`);
+			out.postModifyYouon = youon;
+		}
+		return out;
+	}
+	/** behavior.pendingLabels。表示だけの宣言なので、壊れた項目は診断して捨てる（読み込みは止めない） */
+	function decodePendingLabels(raw, opts) {
+		if (raw === void 0 || raw === null) return void 0;
+		const out = {};
+		for (const [k, v] of Object.entries(raw)) {
+			if (k.startsWith("_comment")) continue;
+			if (typeof v === "string" && v.length > 0 && k.length > 0) out[k] = v;
+			else opts.onDiagnostic?.({
+				code: "pending-label-invalid",
+				message: `pendingLabels の値は 1 文字以上の文字列である必要があります: "${k}"`,
+				where: "behavior.pendingLabels",
+				key: k
+			});
+		}
+		return out;
+	}
+	/** behavior.unusedPrefix。未知の値は黙って既定に倒さず拒否する（decodeJudgment と同じ理由） */
+	function decodeUnusedPrefix(raw) {
+		if (raw === void 0 || raw === null) return void 0;
+		if (raw === "emit" || raw === "drop") return raw;
+		throw new Error(`KeymapEngine: 非対応の unusedPrefix "${String(raw)}"（"emit" / "drop" のみ）`);
+	}
+	/** Decode modeKeys from JSON string keys like "ctrl+space" */
+	function decodeModeKeys(raw, opts) {
+		if (!raw) return [];
+		const entries = [];
+		for (const [keyStr, rawAction] of Object.entries(raw)) {
+			if (keyStr.startsWith("_comment")) continue;
+			const actionStr = typeof rawAction === "string" ? rawAction : JSON.stringify(rawAction);
+			const trigger = decodeModeKeyTrigger(keyStr);
+			if (!trigger) {
+				opts.onDiagnostic?.({
+					code: "mode-key-trigger-unknown",
+					message: `modeKeys のキー名を解釈できません: "${keyStr}"`,
+					where: "modeKeys",
+					key: keyStr,
+					value: actionStr
+				});
+				continue;
+			}
+			const parsed = parseKeyActionResult(rawAction, "keymap.modeKeys");
+			if (!parsed.ok) {
+				reportActionRejection(opts.onDiagnostic, parsed.reason, "modeKeys", keyStr, actionStr);
+				continue;
+			}
+			entries.push({
+				trigger,
+				action: parsed.action,
+				...parsed.when ? { when: parsed.when } : {}
+			});
+		}
+		return entries;
+	}
+	/**
+	* トップレベルのフィールドを検査する。
+	*
+	* - **未知のフィールド → エラー**（黙って飛ばして読まない）
+	* - 既知だがこのランタイムが解釈しないフィールド → 診断で報告（読み込みは続ける）
+	*/
+	function assertKnownFields(json, opts) {
+		const unknown = Object.keys(json).filter((k) => !KNOWN_FIELDS.has(k) && !k.startsWith("_comment"));
+		if (unknown.length > 0) throw new Error(`KeymapEngine: 未知のフィールドがあります: ${unknown.join(", ")}。新しい仕様を要求する配列を、それを知らないエンジンで読もうとしています`);
+		if (!opts.onDiagnostic) return;
+		for (const k of Object.keys(json)) if (IGNORED_FIELDS.has(k)) opts.onDiagnostic({
+			code: "field-ignored",
+			message: `このランタイムは "${k}" を解釈しません（書いても効きません）`,
+			where: "(トップレベル)",
+			key: k
+		});
+	}
+	/** base の未知値はエラー（既定へ潰さない） */
+	function decodeBase(raw) {
+		if (raw === void 0 || raw === null) return void 0;
+		if (raw === "characters" || raw === "positional") return raw;
+		throw new Error(`KeymapEngine: 非対応の base "${String(raw)}"（characters / positional のみ）`);
+	}
+	/** requiresInput の未知値はエラー（既定へ潰さない） */
+	function decodeInputLevel(raw) {
+		if (raw === void 0 || raw === null) return void 0;
+		if (raw === "L1" || raw === "L2" || raw === "L3") return raw;
+		throw new Error(`KeymapEngine: 非対応の requiresInput "${String(raw)}"（L1 / L2 / L3 のみ）`);
+	}
+	/** judgment の未知値は既定へ潰さずエラー（v1.10.0。旧版は黙って window にしていた） */
+	function decodeJudgment(raw) {
+		if (raw === void 0 || raw === null) return "window";
+		if (raw === "window" || raw === "mutual") return raw;
+		throw new Error(`KeymapEngine: 非対応の judgment "${String(raw)}"（"window" / "mutual" のみ）。新しい判定方式を要求する配列を、それを知らないエンジンで読もうとしています`);
+	}
+	/** Parse "ctrl+shift+j" → { keyCode, modifiers } */
+	function decodeModeKeyTrigger(str) {
+		const parts = str.split("+");
+		let modifiers = 0;
+		let keyNameIdx = 0;
+		const modMap = {
+			ctrl: KeyModifierFlags.CONTROL,
+			shift: KeyModifierFlags.SHIFT,
+			alt: KeyModifierFlags.ALT
+		};
+		for (let i = 0; i < parts.length; i++) {
+			const mod = modMap[parts[i]];
+			if (mod !== void 0) {
+				modifiers |= mod;
+				keyNameIdx = i + 1;
+			} else break;
+		}
+		if (keyNameIdx >= parts.length) return null;
+		const keyCode = hidNameToCode(parts.slice(keyNameIdx).join("+"));
+		if (keyCode === void 0) return null;
+		return {
+			keyCode,
+			modifiers
+		};
+	}
+	/** Parse a KeyAction string from JSON */
+	/** Filter out _comment keys from inputMappings */
+	function filterComments(mappings) {
+		if (!mappings) return void 0;
+		const result = {};
+		for (const [k, v] of Object.entries(mappings)) if (!k.startsWith("_comment")) result[k] = v;
+		return Object.keys(result).length > 0 ? result : void 0;
+	}
+	//#endregion
+	//#region src/engine/input-level.ts
+	const ORDER = {
+		L1: 1,
+		L2: 2,
+		L3: 3
+	};
+	/**
+	* この配列を**このランタイムで**動かすのに必要な段を求める。
+	*
+	* - 逐次系 → L1（完結した打鍵列だけで意味が決まる）
+	* - chord 系 → **L3**。仕様上は時間窓方式なら L2 で近似できるが、
+	*   この実装は `window` でも単打確定を全キーリリースに置いている
+	*   （`SimultaneousKeyBuffer` は heldKeys 駆動）ため、実際には keyup が要る
+	*
+	* JSON の `requiresInput` 宣言は**厳しくする方向にのみ**効く。緩める宣言
+	* （実装が L3 を要るのに L1 と書く）を通すと、動かない配列を「動く」と誤って
+	* 見せることになるため。
+	*/
+	function requiredInputLevel(def) {
+		const derived = def.behavior.type === "chord" ? "L3" : "L1";
+		const declared = def.requiresInput;
+		if (declared && ORDER[declared] > ORDER[derived]) return declared;
+		return derived;
+	}
+	/** ホストの段で、その配列が動くか */
+	function isSatisfiedBy(required, hostLevel) {
+		return ORDER[hostLevel] >= ORDER[required];
+	}
+	//#endregion
+	//#region src/engine/roles.ts
+	/**
+	* 役名の別名。正規名は機能ベースで、身体部位の名前は可読性のために受理するだけ。
+	* v1 の `leftThumb` / `rightThumb` / `space` からの書き換えを不要にする効果もある。
+	*/
+	const ROLE_ALIASES = {
+		leftThumb: "holder1",
+		rightThumb: "holder2"
+	};
+	/** 別名を正規名に直す */
+	function canonicalRole(name) {
+		return ROLE_ALIASES[name] ?? name;
+	}
+	/**
+	* 役を解決する。
+	*
+	* @param layout どのレイアウトの追加バインドを適用するか（`layouts` のキー）。
+	*               省略すると `layouts` は適用されない（役の既定候補だけ）
+	* @param overrides ホストの実行時上書き。役 → 物理キー名の配列。
+	*                  **指定された役は既定を置き換える**（追加ではない）
+	*/
+	function resolveRoles(def, layout, overrides) {
+		const bindings = /* @__PURE__ */ new Map();
+		const order = [];
+		for (const [rawName, role] of Object.entries(def.roles ?? {})) {
+			const name = canonicalRole(rawName);
+			order.push(name);
+			const override = overrides?.get(name);
+			if (override) {
+				bindings.set(name, [...new Set(override)]);
+				continue;
+			}
+			const keys = [...role.keys ?? []];
+			const extra = layout ? def.layouts?.[layout]?.[rawName] ?? def.layouts?.[layout]?.[name] : void 0;
+			if (extra) keys.push(...extra);
+			bindings.set(name, [...new Set(keys)]);
+		}
+		const keyToRole = /* @__PURE__ */ new Map();
+		for (const name of order) for (const key of bindings.get(name) ?? []) if (!keyToRole.has(key)) keyToRole.set(key, name);
+		return {
+			bindings,
+			keyToRole,
+			order,
+			unbound: order.filter((n) => (bindings.get(n) ?? []).length === 0)
+		};
+	}
+	//#endregion
+	//#region src/engine/standard-romaji.ts
+	const standardRomajiTable = {
+		a: "あ",
+		i: "い",
+		u: "う",
+		e: "え",
+		o: "お",
+		ka: "か",
+		ki: "き",
+		ku: "く",
+		ke: "け",
+		ko: "こ",
+		ca: "か",
+		ci: "し",
+		cu: "く",
+		ce: "せ",
+		co: "こ",
+		sa: "さ",
+		si: "し",
+		shi: "し",
+		su: "す",
+		se: "せ",
+		so: "そ",
+		ta: "た",
+		ti: "ち",
+		chi: "ち",
+		tu: "つ",
+		tsu: "つ",
+		te: "て",
+		to: "と",
+		na: "な",
+		ni: "に",
+		nu: "ぬ",
+		ne: "ね",
+		no: "の",
+		ha: "は",
+		hi: "ひ",
+		hu: "ふ",
+		he: "へ",
+		ho: "ほ",
+		ma: "ま",
+		mi: "み",
+		mu: "む",
+		me: "め",
+		mo: "も",
+		ya: "や",
+		yu: "ゆ",
+		yo: "よ",
+		ra: "ら",
+		ri: "り",
+		ru: "る",
+		re: "れ",
+		ro: "ろ",
+		wa: "わ",
+		wi: "うぃ",
+		we: "うぇ",
+		wo: "を",
+		wyi: "ゐ",
+		wye: "ゑ",
+		whu: "う",
+		ga: "が",
+		gi: "ぎ",
+		gu: "ぐ",
+		ge: "げ",
+		go: "ご",
+		za: "ざ",
+		zi: "じ",
+		ji: "じ",
+		zu: "ず",
+		ze: "ぜ",
+		zo: "ぞ",
+		da: "だ",
+		di: "ぢ",
+		du: "づ",
+		dzu: "づ",
+		de: "で",
+		do: "ど",
+		ba: "ば",
+		bi: "び",
+		bu: "ぶ",
+		be: "べ",
+		bo: "ぼ",
+		pa: "ぱ",
+		pi: "ぴ",
+		pu: "ぷ",
+		pe: "ぺ",
+		po: "ぽ",
+		ye: "いぇ",
+		kya: "きゃ",
+		kyu: "きゅ",
+		kye: "きぇ",
+		kyo: "きょ",
+		sya: "しゃ",
+		syu: "しゅ",
+		sye: "しぇ",
+		syo: "しょ",
+		sha: "しゃ",
+		shu: "しゅ",
+		she: "しぇ",
+		sho: "しょ",
+		tya: "ちゃ",
+		tyi: "ちぃ",
+		tyu: "ちゅ",
+		tye: "ちぇ",
+		tyo: "ちょ",
+		cha: "ちゃ",
+		chu: "ちゅ",
+		che: "ちぇ",
+		cho: "ちょ",
+		cya: "ちゃ",
+		cyi: "ちぃ",
+		cyu: "ちゅ",
+		cye: "ちぇ",
+		cyo: "ちょ",
+		nya: "にゃ",
+		nyi: "にぃ",
+		nyu: "にゅ",
+		nye: "にぇ",
+		nyo: "にょ",
+		hya: "ひゃ",
+		hyi: "ひぃ",
+		hyu: "ひゅ",
+		hye: "ひぇ",
+		hyo: "ひょ",
+		mya: "みゃ",
+		myi: "みぃ",
+		myu: "みゅ",
+		mye: "みぇ",
+		myo: "みょ",
+		rya: "りゃ",
+		ryi: "りぃ",
+		ryu: "りゅ",
+		rye: "りぇ",
+		ryo: "りょ",
+		gya: "ぎゃ",
+		gyu: "ぎゅ",
+		gye: "ぎぇ",
+		gyo: "ぎょ",
+		zya: "じゃ",
+		zyu: "じゅ",
+		zye: "じぇ",
+		zyo: "じょ",
+		ja: "じゃ",
+		ju: "じゅ",
+		je: "じぇ",
+		jo: "じょ",
+		jya: "じゃ",
+		jyi: "じぃ",
+		jyu: "じゅ",
+		jye: "じぇ",
+		jyo: "じょ",
+		bya: "びゃ",
+		byi: "びぃ",
+		byu: "びゅ",
+		bye: "びぇ",
+		byo: "びょ",
+		pya: "ぴゃ",
+		pyi: "ぴぃ",
+		pyu: "ぴゅ",
+		pye: "ぴぇ",
+		pyo: "ぴょ",
+		dya: "ぢゃ",
+		dyi: "ぢぃ",
+		dyu: "ぢゅ",
+		dye: "ぢぇ",
+		dyo: "ぢょ",
+		fa: "ふぁ",
+		fi: "ふぃ",
+		fu: "ふ",
+		fe: "ふぇ",
+		fo: "ふぉ",
+		fya: "ふゃ",
+		fyu: "ふゅ",
+		fyo: "ふょ",
+		fwa: "ふぁ",
+		fwi: "ふぃ",
+		fwu: "ふぅ",
+		fwe: "ふぇ",
+		fwo: "ふぉ",
+		hwa: "ふぁ",
+		hwi: "ふぃ",
+		hwe: "ふぇ",
+		hwo: "ふぉ",
+		va: "ヴぁ",
+		vi: "ヴぃ",
+		vu: "ヴ",
+		ve: "ヴぇ",
+		vo: "ヴぉ",
+		vya: "ゔゃ",
+		vyu: "ゔゅ",
+		vyo: "ゔょ",
+		tha: "てゃ",
+		thi: "てぃ",
+		thu: "てゅ",
+		the: "てぇ",
+		tho: "てょ",
+		dha: "でゃ",
+		dhi: "でぃ",
+		dhu: "でゅ",
+		dhe: "でぇ",
+		dho: "でょ",
+		swa: "すぁ",
+		swi: "すぃ",
+		swu: "すぅ",
+		swe: "すぇ",
+		swo: "すぉ",
+		twa: "とぁ",
+		twi: "とぃ",
+		twu: "とぅ",
+		twe: "とぇ",
+		two: "とぉ",
+		dwa: "どぁ",
+		dwi: "どぃ",
+		dwu: "どぅ",
+		dwe: "どぇ",
+		dwo: "どぉ",
+		tsa: "つぁ",
+		tsi: "つぃ",
+		tse: "つぇ",
+		tso: "つぉ",
+		wha: "うぁ",
+		whi: "うぃ",
+		whe: "うぇ",
+		who: "うぉ",
+		kwa: "くぁ",
+		kwi: "くぃ",
+		kwu: "くぅ",
+		kwe: "くぇ",
+		kwo: "くぉ",
+		qa: "くぁ",
+		qi: "くぃ",
+		qu: "くぅ",
+		qe: "くぇ",
+		qo: "くぉ",
+		qwa: "くぁ",
+		qwi: "くぃ",
+		qwu: "くぅ",
+		qwe: "くぇ",
+		qwo: "くぉ",
+		gwa: "ぐぁ",
+		gwi: "ぐぃ",
+		gwu: "ぐぅ",
+		gwe: "ぐぇ",
+		gwo: "ぐぉ",
+		xka: "ヵ",
+		xke: "ヶ",
+		lka: "ヵ",
+		lke: "ヶ",
+		n: "ん",
+		nn: "ん",
+		"n'": "ん",
+		xn: "ん",
+		kka: "っか",
+		kki: "っき",
+		kku: "っく",
+		kke: "っけ",
+		kko: "っこ",
+		kkya: "っきゃ",
+		kkyu: "っきゅ",
+		kkye: "っきぇ",
+		kkyo: "っきょ",
+		kkwa: "っくぁ",
+		kkwi: "っくぃ",
+		kkwu: "っくぅ",
+		kkwe: "っくぇ",
+		kkwo: "っくぉ",
+		ssa: "っさ",
+		ssi: "っし",
+		ssu: "っす",
+		sse: "っせ",
+		sso: "っそ",
+		ssha: "っしゃ",
+		sshi: "っし",
+		sshu: "っしゅ",
+		sshe: "っしぇ",
+		ssho: "っしょ",
+		ssya: "っしゃ",
+		ssyu: "っしゅ",
+		ssye: "っしぇ",
+		ssyo: "っしょ",
+		sswa: "っすぁ",
+		sswi: "っすぃ",
+		sswu: "っすぅ",
+		sswe: "っすぇ",
+		sswo: "っすぉ",
+		tta: "った",
+		tti: "っち",
+		ttu: "っつ",
+		tte: "って",
+		tto: "っと",
+		ttya: "っちゃ",
+		ttyi: "っちぃ",
+		ttyu: "っちゅ",
+		ttye: "っちぇ",
+		ttyo: "っちょ",
+		tcha: "っちゃ",
+		tchi: "っち",
+		tchu: "っちゅ",
+		tche: "っちぇ",
+		tcho: "っちょ",
+		ttsa: "っつぁ",
+		ttsi: "っつぃ",
+		ttse: "っつぇ",
+		ttso: "っつぉ",
+		ttha: "ってゃ",
+		tthi: "ってぃ",
+		tthu: "ってゅ",
+		tthe: "ってぇ",
+		ttho: "ってょ",
+		ttwa: "っとぁ",
+		ttwi: "っとぃ",
+		ttwu: "っとぅ",
+		ttwe: "っとぇ",
+		ttwo: "っとぉ",
+		hha: "っは",
+		hhi: "っひ",
+		hhu: "っふ",
+		hhe: "っへ",
+		hho: "っほ",
+		hhya: "っひゃ",
+		hhyi: "っひぃ",
+		hhyu: "っひゅ",
+		hhye: "っひぇ",
+		hhyo: "っひょ",
+		mma: "っま",
+		mmi: "っみ",
+		mmu: "っむ",
+		mme: "っめ",
+		mmo: "っも",
+		mmya: "っみゃ",
+		mmyi: "っみぃ",
+		mmyu: "っみゅ",
+		mmye: "っみぇ",
+		mmyo: "っみょ",
+		rra: "っら",
+		rri: "っり",
+		rru: "っる",
+		rre: "っれ",
+		rro: "っろ",
+		rrya: "っりゃ",
+		rryi: "っりぃ",
+		rryu: "っりゅ",
+		rrye: "っりぇ",
+		rryo: "っりょ",
+		gga: "っが",
+		ggi: "っぎ",
+		ggu: "っぐ",
+		gge: "っげ",
+		ggo: "っご",
+		ggya: "っぎゃ",
+		ggyu: "っぎゅ",
+		ggye: "っぎぇ",
+		ggyo: "っぎょ",
+		ggwa: "っぐぁ",
+		ggwi: "っぐぃ",
+		ggwu: "っぐぅ",
+		ggwe: "っぐぇ",
+		ggwo: "っぐぉ",
+		zza: "っざ",
+		zzi: "っじ",
+		zzu: "っず",
+		zze: "っぜ",
+		zzo: "っぞ",
+		zzya: "っじゃ",
+		zzyu: "っじゅ",
+		zzye: "っじぇ",
+		zzyo: "っじょ",
+		dda: "っだ",
+		ddi: "っぢ",
+		ddu: "っづ",
+		dde: "っで",
+		ddo: "っど",
+		ddzu: "っづ",
+		ddya: "っぢゃ",
+		ddyi: "っぢぃ",
+		ddyu: "っぢゅ",
+		ddye: "っぢぇ",
+		ddyo: "っぢょ",
+		ddha: "っでゃ",
+		ddhi: "っでぃ",
+		ddhu: "っでゅ",
+		ddhe: "っでぇ",
+		ddho: "っでょ",
+		ddwa: "っどぁ",
+		ddwi: "っどぃ",
+		ddwu: "っどぅ",
+		ddwe: "っどぇ",
+		ddwo: "っどぉ",
+		bba: "っば",
+		bbi: "っび",
+		bbu: "っぶ",
+		bbe: "っべ",
+		bbo: "っぼ",
+		bbya: "っびゃ",
+		bbyi: "っびぃ",
+		bbyu: "っびゅ",
+		bbye: "っびぇ",
+		bbyo: "っびょ",
+		ppa: "っぱ",
+		ppi: "っぴ",
+		ppu: "っぷ",
+		ppe: "っぺ",
+		ppo: "っぽ",
+		ppya: "っぴゃ",
+		ppyi: "っぴぃ",
+		ppyu: "っぴゅ",
+		ppye: "っぴぇ",
+		ppyo: "っぴょ",
+		ffa: "っふぁ",
+		ffi: "っふぃ",
+		ffu: "っふ",
+		ffe: "っふぇ",
+		ffo: "っふぉ",
+		ffya: "っふゃ",
+		ffyu: "っふゅ",
+		ffyo: "っふょ",
+		ffwa: "っふぁ",
+		ffwi: "っふぃ",
+		ffwu: "っふぅ",
+		ffwe: "っふぇ",
+		ffwo: "っふぉ",
+		jja: "っじゃ",
+		jji: "っじ",
+		jju: "っじゅ",
+		jje: "っじぇ",
+		jjo: "っじょ",
+		jjyi: "っじぃ",
+		jjya: "っじゃ",
+		jjyu: "っじゅ",
+		jjye: "っじぇ",
+		jjyo: "っじょ",
+		cca: "っか",
+		cci: "っち",
+		ccu: "っく",
+		cce: "っけ",
+		cco: "っこ",
+		ccha: "っちゃ",
+		cchi: "っち",
+		cchu: "っちゅ",
+		cche: "っちぇ",
+		ccho: "っちょ",
+		ccya: "っちゃ",
+		ccyi: "っちぃ",
+		ccyu: "っちゅ",
+		ccye: "っちぇ",
+		ccyo: "っちょ",
+		vvu: "っゔ",
+		vva: "っゔぁ",
+		vvi: "っゔぃ",
+		vve: "っゔぇ",
+		vvo: "っゔぉ",
+		vvya: "っゔゃ",
+		vvyu: "っゔゅ",
+		vvyo: "っゔょ",
+		xa: "ぁ",
+		xi: "ぃ",
+		xu: "ぅ",
+		xe: "ぇ",
+		xo: "ぉ",
+		xya: "ゃ",
+		xyu: "ゅ",
+		xyo: "ょ",
+		xtu: "っ",
+		xtsu: "っ",
+		xwa: "ゎ",
+		la: "ぁ",
+		li: "ぃ",
+		lu: "ぅ",
+		le: "ぇ",
+		lo: "ぉ",
+		lya: "ゃ",
+		lyu: "ゅ",
+		lyo: "ょ",
+		ltu: "っ",
+		ltsu: "っ",
+		lwa: "ゎ"
+	};
+	/** Half-width → full-width character map (US keyboard)
+	*  Port of DefaultKeymaps.h2zMapUS */
+	const h2zMapUS = {
+		"0": "０",
+		"1": "１",
+		"2": "２",
+		"3": "３",
+		"4": "４",
+		"5": "５",
+		"6": "６",
+		"7": "７",
+		"8": "８",
+		"9": "９",
+		",": "、",
+		".": "。",
+		"/": "・",
+		"[": "「",
+		"]": "」",
+		"{": "『",
+		"}": "』",
+		"(": "（",
+		")": "）",
+		"<": "＜",
+		">": "＞",
+		"-": "ー",
+		"~": "〜",
+		"^": "＾",
+		"_": "＿",
+		"\"": "”",
+		"'": "’",
+		"`": "｀",
+		"+": "＋",
+		"=": "＝",
+		"*": "＊",
+		"!": "！",
+		"?": "？",
+		":": "：",
+		";": "；",
+		"@": "＠",
+		"#": "＃",
+		"$": "＄",
+		"%": "％",
+		"&": "＆",
+		"|": "｜",
+		"\\": "＼",
+		"¥": "￥"
+	};
+	//#endregion
+	//#region src/engine/keymap-expander.ts
+	/** Expand a KeymapDefinition into an ExpandedKeymap with pre-computed lookup data */
+	/** roles の宣言を正規名で引けるようにする（別名 leftThumb → holder1 を吸収） */
+	function normalizedRoleDefs(def) {
+		const out = {};
+		for (const [name, role] of Object.entries(def.roles ?? {})) out[canonicalRole(name)] = role;
+		return out;
+	}
+	function expandKeymap(def, opts = {}) {
+		const roles = resolveRoles(def, opts.layout, opts.roleOverrides);
+		for (const name of roles.unbound) opts.onDiagnostic?.({
+			code: "role-unbound",
+			message: `役 "${name}" に物理キーが割り当てられていません（この面は到達できません）`,
+			where: "roles",
+			key: name
+		});
+		const { mappings: inputMappings, baseOnlyKeys } = expandInputMappings(def.inputBase, def.suffixRules, def.inputMappings);
+		const prefixSet = buildPrefixSet(inputMappings);
+		const displayRawKeys = buildDisplayRawKeys(baseOnlyKeys, prefixSet);
+		const pendingLabels = def.behavior.type === "sequential" ? def.behavior.pendingLabels ?? {} : {};
+		for (const key of Object.keys(pendingLabels)) {
+			if (prefixSet.has(key)) continue;
+			opts.onDiagnostic?.({
+				code: "pending-label-unreachable",
+				message: `pendingLabels の "${key}" は続きを待つ打鍵列ではないので、表示されることがありません`,
+				where: "behavior.pendingLabels",
+				key
+			});
+		}
+		const charMapBase = def.inputBase === "romaji" ? h2zMapUS : {};
+		const characterMap = def.behavior.type === "sequential" ? {
+			...charMapBase,
+			...def.behavior.characterMap
+		} : {};
+		const chordData = def.behavior.type === "chord" ? expandChordData(def.behavior.config, opts, roles, normalizedRoleDefs(def)) : void 0;
+		return {
+			definition: def,
+			requiredInputLevel: requiredInputLevel(def),
+			roleBindings: roles.bindings,
+			unboundRoles: roles.unbound,
+			inputMappings,
+			prefixSet,
+			displayRawKeys,
+			dropUnusedPrefix: def.behavior.type === "sequential" && def.behavior.unusedPrefix === "drop",
+			pendingLabels,
+			...expandSequentialActions(def, opts),
+			postModifyCycles: def.postModifyCycles ?? DEFAULT_POST_MODIFY_CYCLES,
+			postModifyYouon: def.postModifyYouon ?? "tail",
+			characterMap,
+			modeKeys: def.modeKeys ?? [],
+			keyRemap: def.keyRemap ?? {},
+			chordData
+		};
+	}
+	/** Expand input mappings: base + suffix rules + explicit mappings
+	*  Port of KeymapDefinition.expandInputMappings */
+	function expandInputMappings(inputBase, suffixRules, explicitMappings) {
+		let base = {};
+		if (inputBase === "romaji") base = { ...standardRomajiTable };
+		const allEntries = { ...base };
+		if (explicitMappings) {
+			for (const [k, v] of Object.entries(explicitMappings)) if (!k.startsWith("_comment")) allEntries[k] = v;
+		}
+		const vowels = /* @__PURE__ */ new Set([
+			"a",
+			"i",
+			"u",
+			"e",
+			"o"
+		]);
+		const suffixExpansions = {};
+		if (suffixRules && Object.keys(suffixRules).length > 0) for (const [romajiSeq, kanaOutput] of Object.entries(allEntries)) {
+			const lastChar = romajiSeq[romajiSeq.length - 1];
+			if (!lastChar || !vowels.has(lastChar)) continue;
+			const consonantPrefix = romajiSeq.slice(0, -1);
+			if (consonantPrefix.length === 0) continue;
+			for (const [suffixKey, rule] of Object.entries(suffixRules)) {
+				if (lastChar !== rule.vowel) continue;
+				const expandedKey = consonantPrefix + suffixKey;
+				suffixExpansions[expandedKey] = kanaOutput + rule.suffix;
+			}
+		}
+		const result = { ...base };
+		const baseOnlyKeys = new Set(Object.keys(base));
+		for (const [k, v] of Object.entries(suffixExpansions)) {
+			result[k] = v;
+			baseOnlyKeys.delete(k);
+		}
+		if (explicitMappings) {
+			for (const [k, v] of Object.entries(explicitMappings)) if (!k.startsWith("_comment")) {
+				result[k] = v;
+				baseOnlyKeys.delete(k);
+			}
+		}
+		return {
+			mappings: result,
+			baseOnlyKeys
+		};
+	}
+	/**
+	* 未確定バッファを**素のまま**見せるキー（かなへ仮解決しない）。
+	*
+	* 対象は「一致しているのに、より長いキーの接頭辞でもある」もの。このとき仮解決を見せるか
+	* どうかは、その割り当てが**配列の意思か既定の受け皿か**で変わる:
+	*
+	* - 配列が明示したキー（AZIK の `q`=ん・`kk`=きん、月配列の `q`=そ）は**それ自体が完成したかな**。
+	*   1 打鍵 1 かなの配列で素のアルファベットを見せても読めないので、仮解決を見せる（従来どおり）
+	* - 標準ローマ字が既定で敷いた分は**続きが来なかったときの救済**。該当するのは撥音の `n` だけで、
+	*   打った人の意図は多く「な行」。ここで「ん」を見せると次の打鍵で「な」へ巻き戻って見える
+	*   （内蔵ローマ字 = hechima の `resolveRomaji` も `n` のまま見せる）
+	*
+	* 原典の Swift `pendingBufferText` は月配列などのカスタムテーブル専用で、
+	* 標準ローマ字は AzooKey の trie を通るためこの経路に来なかった。web は両方を
+	* 同じ経路に流したので、この切り分けが要る。
+	*/
+	function buildDisplayRawKeys(baseOnlyKeys, prefixSet) {
+		const keys = /* @__PURE__ */ new Set();
+		for (const k of baseOnlyKeys) if (prefixSet.has(k)) keys.add(k);
+		return keys;
+	}
+	/**
+	* 逐次系の behavior.specialActions（1 文字 → アクション。日本語入力中だけ効く）。
+	* 語彙と面は chord の specialActions と同じ（`keymap.specialActions`）
+	*/
+	function expandSequentialActions(def, opts) {
+		const sequentialActions = /* @__PURE__ */ new Map();
+		const sequentialActionGuards = /* @__PURE__ */ new Map();
+		const raw = def.behavior.type === "sequential" ? def.behavior.specialActions ?? {} : {};
+		const where = "behavior.specialActions";
+		for (const [key, rawAction] of Object.entries(raw)) {
+			if (key.startsWith("_comment")) continue;
+			const label = typeof rawAction === "string" ? rawAction : JSON.stringify(rawAction);
+			if ([...key].length !== 1) {
+				opts.onDiagnostic?.({
+					code: "sequential-action-key-invalid",
+					message: `specialActions のキーは 1 文字である必要があります（逐次系）: "${key}"`,
+					where,
+					key,
+					value: label
+				});
+				continue;
+			}
+			const parsed = parseKeyActionResult(rawAction, "keymap.specialActions");
+			if (!parsed.ok) {
+				reportActionRejection(opts.onDiagnostic, parsed.reason, where, key, label);
+				continue;
+			}
+			sequentialActions.set(key, parsed.action);
+			if (parsed.when) sequentialActionGuards.set(key, parsed.when);
+		}
+		return {
+			sequentialActions,
+			sequentialActionGuards
+		};
+	}
+	/** Build a set of all prefixes of mapping keys (for greedy longest-match) */
+	function buildPrefixSet(mappings) {
+		const prefixes = /* @__PURE__ */ new Set();
+		for (const key of Object.keys(mappings)) for (let i = 1; i < key.length; i++) prefixes.add(key.slice(0, i));
+		return prefixes;
+	}
+	/** Create an ExpandedKeymap for the built-in romaji (US) layout */
+	function createBuiltinRomajiUS() {
+		return expandKeymap({
+			formatVersion: "1.0",
+			name: "ローマ字(QWERTY US)",
+			description: "標準ローマ字入力（US キーボード）",
+			keyboardLayout: "us",
+			targetScript: "hiragana",
+			behavior: {
+				type: "sequential",
+				characterMap: h2zMapUS
+			},
+			inputBase: "romaji",
+			modeKeys: [{
+				trigger: {
+					keyCode: 44,
+					modifiers: 2
+				},
+				action: { type: "toggleInputMode" }
+			}]
+		});
+	}
+	/** Create an ExpandedKeymap for the built-in romaji (JIS) layout */
+	function createBuiltinRomajiJIS() {
+		return expandKeymap({
+			formatVersion: "1.0",
+			name: "ローマ字(QWERTY JIS)",
+			description: "標準ローマ字入力（JIS キーボード）",
+			keyboardLayout: "jis",
+			targetScript: "hiragana",
+			behavior: {
+				type: "sequential",
+				characterMap: h2zMapUS
+			},
+			inputBase: "romaji",
+			modeKeys: [
+				{
+					trigger: {
+						keyCode: 145,
+						modifiers: 0
+					},
+					action: { type: "switchToEnglish" }
+				},
+				{
+					trigger: {
+						keyCode: 144,
+						modifiers: 0
+					},
+					action: { type: "switchToJapanese" }
+				},
+				{
+					trigger: {
+						keyCode: 44,
+						modifiers: 2
+					},
+					action: { type: "toggleInputMode" }
+				}
+			]
+		});
+	}
+	/** ChordKey name → bit index (matches Swift enum rawValue) */
+	const CHORD_KEY_BIT_INDEX = {
+		Q: 0,
+		W: 1,
+		E: 2,
+		R: 3,
+		T: 4,
+		Y: 5,
+		U: 6,
+		I: 7,
+		O: 8,
+		P: 9,
+		A: 10,
+		S: 11,
+		D: 12,
+		F: 13,
+		G: 14,
+		H: 15,
+		J: 16,
+		K: 17,
+		L: 18,
+		semicolon: 19,
+		Z: 20,
+		X: 21,
+		C: 22,
+		V: 23,
+		B: 24,
+		N: 25,
+		M: 26,
+		comma: 27,
+		dot: 28,
+		slash: 29,
+		space: 30,
+		leftThumb: 31,
+		rightThumb: 32
+	};
+	/** Parse a lookup key like "leftThumb+W" → combined bitmask */
+	function parseLookupKey(key, keyBits) {
+		const parts = key.split("+");
+		let bits = 0;
+		for (const part of parts) {
+			const b = keyBits.get(part);
+			if (b === void 0) return void 0;
+			bits += b;
+		}
+		return bits;
+	}
+	/** Expand chord config into ExpandedChordData */
+	function expandChordData(config, opts = {}, roles, roleDefs) {
+		const diag = opts.onDiagnostic;
+		const roleBitIndex = /* @__PURE__ */ new Map();
+		(roles?.order ?? []).forEach((name, i) => roleBitIndex.set(name, 30 + i));
+		/** ビットマスク表記のキーを解く。未知の ChordKey 名は報告して捨てる */
+		const parseKeyOrReport = (keyStr, where, value) => {
+			const bits = parseLookupKey(keyStr, keyBits);
+			if (bits === void 0) diag?.({
+				code: "chord-key-unknown",
+				message: `未知の ChordKey 名を含む組合せです: "${keyStr}"`,
+				where,
+				key: keyStr,
+				value
+			});
+			return bits;
+		};
+		const keyBits = /* @__PURE__ */ new Map();
+		for (const [name, idx] of Object.entries(CHORD_KEY_BIT_INDEX)) keyBits.set(name, 2 ** idx);
+		for (const [name, idx] of roleBitIndex) keyBits.set(name, 2 ** idx);
+		for (const alias of [
+			"leftThumb",
+			"rightThumb",
+			"space"
+		]) {
+			const canon = canonicalRole(alias);
+			const idx = roleBitIndex.get(canon);
+			if (idx !== void 0 && !roleBitIndex.has(alias)) keyBits.set(alias, 2 ** idx);
+		}
+		const hidToChordKey = /* @__PURE__ */ new Map();
+		for (const [roleName, physKeys] of roles?.bindings ?? []) for (const physName of physKeys) {
+			const hid = hidNameToCode(physName);
+			if (hid !== void 0) hidToChordKey.set(hid, roleName);
+			else diag?.({
+				code: "hid-key-unknown",
+				message: `役 "${roleName}" に未知の物理キー名が割り当てられています: "${physName}"`,
+				where: "roles",
+				key: physName,
+				value: roleName
+			});
+		}
+		for (const [hidName, chordKeyName] of Object.entries(config.hidToKey)) {
+			if (hidName.startsWith("_comment")) continue;
+			const hid = hidNameToCode(hidName);
+			if (hid !== void 0) hidToChordKey.set(hid, chordKeyName);
+			else diag?.({
+				code: "hid-key-unknown",
+				message: `未知の物理キー名です: "${hidName}"`,
+				where: "behavior.config.hidToKey",
+				key: hidName,
+				value: chordKeyName
+			});
+		}
+		const lookupTable = /* @__PURE__ */ new Map();
+		for (const [keyStr, output] of Object.entries(config.lookupTable)) {
+			if (keyStr.startsWith("_comment")) continue;
+			const bits = parseKeyOrReport(keyStr, "behavior.config.lookupTable", output);
+			if (bits !== void 0) lookupTable.set(bits, output);
+		}
+		const specialActions = /* @__PURE__ */ new Map();
+		const specialActionGuards = /* @__PURE__ */ new Map();
+		for (const [keyStr, rawAction] of Object.entries(config.specialActions)) {
+			if (keyStr.startsWith("_comment")) continue;
+			const where = "behavior.config.specialActions";
+			const label = typeof rawAction === "string" ? rawAction : JSON.stringify(rawAction);
+			const bits = parseKeyOrReport(keyStr, where, label);
+			const parsed = parseKeyActionResult(rawAction, "keymap.specialActions");
+			if (!parsed.ok) {
+				reportActionRejection(diag, parsed.reason, where, keyStr, label);
+				continue;
+			}
+			if (bits !== void 0) {
+				specialActions.set(bits, parsed.action);
+				if (parsed.when) specialActionGuards.set(bits, parsed.when);
+			}
+		}
+		const shiftKeys = new Set(roles?.order ?? []);
+		const shiftSingleTapActions = /* @__PURE__ */ new Map();
+		const shiftSingleTapGuards = /* @__PURE__ */ new Map();
+		const spaceRole = hidToChordKey.get(HID.SPACE);
+		for (const [roleName, physKeys] of roles?.bindings ?? []) {
+			const decl = roleDefs?.[roleName]?.singleTapAction;
+			if (decl !== void 0) {
+				const parsed = parseKeyActionResult(decl, "keymap.singleTapAction");
+				if (parsed.ok) {
+					shiftSingleTapActions.set(roleName, parsed.action);
+					if (parsed.when) shiftSingleTapGuards.set(roleName, parsed.when);
+				} else reportActionRejection(diag, parsed.reason, "roles", roleName, String(decl));
+			} else if (physKeys.includes("space")) shiftSingleTapActions.set(roleName, { type: "convert" });
+		}
+		for (const sk of config.shiftKeys ?? []) {
+			shiftKeys.add(sk.key);
+			if (sk.singleTapAction) {
+				const parsed = parseKeyActionResult(sk.singleTapAction, "keymap.singleTapAction");
+				if (parsed.ok) {
+					shiftSingleTapActions.set(sk.key, parsed.action);
+					if (parsed.when) shiftSingleTapGuards.set(sk.key, parsed.when);
+				} else reportActionRejection(diag, parsed.reason, "behavior.config.shiftKeys", sk.key, sk.singleTapAction);
+			} else if (sk.key === spaceRole) shiftSingleTapActions.set(sk.key, { type: "convert" });
+		}
+		let englishLookupTable = null;
+		if (config.englishLookupTable) {
+			englishLookupTable = /* @__PURE__ */ new Map();
+			for (const [keyStr, output] of Object.entries(config.englishLookupTable)) {
+				if (keyStr.startsWith("_comment")) continue;
+				const bits = parseKeyOrReport(keyStr, "behavior.config.englishLookupTable", output);
+				if (bits !== void 0) englishLookupTable.set(bits, output);
+			}
+		}
+		let englishSpecialActions = null;
+		let englishSpecialActionGuards = null;
+		if (config.englishSpecialActions) {
+			englishSpecialActions = /* @__PURE__ */ new Map();
+			englishSpecialActionGuards = /* @__PURE__ */ new Map();
+			for (const [keyStr, rawAction] of Object.entries(config.englishSpecialActions)) {
+				if (keyStr.startsWith("_comment")) continue;
+				const where = "behavior.config.englishSpecialActions";
+				const label = typeof rawAction === "string" ? rawAction : JSON.stringify(rawAction);
+				const bits = parseKeyOrReport(keyStr, where, label);
+				const parsed = parseKeyActionResult(rawAction, "keymap.englishSpecialActions");
+				if (!parsed.ok) {
+					reportActionRejection(diag, parsed.reason, where, keyStr, label);
+					continue;
+				}
+				if (bits !== void 0) {
+					englishSpecialActions.set(bits, parsed.action);
+					if (parsed.when) englishSpecialActionGuards.set(bits, parsed.when);
+				}
+			}
+		}
+		return {
+			hidToChordKey,
+			lookupTable,
+			specialActions,
+			specialActionGuards,
+			shiftKeys,
+			shiftSingleTapActions,
+			shiftSingleTapGuards,
+			keyBits,
+			judgment: config.judgment ?? "window",
+			simultaneousWindow: Math.round(config.simultaneousWindow * 1e3),
+			englishLookupTable,
+			englishSpecialActions,
+			englishSpecialActionGuards
+		};
+	}
+	//#endregion
+	//#region src/engine/version.ts
+	const ENGINE_VERSION = "2.10.0";
+	//#endregion
+	//#region src/engine/key-router.ts
+	/** Route a KeyEvent to a KeyAction based on the expanded keymap */
+	function routeKey(event, keymap, isComposing, state, isDirectEnglishMode, phase = isComposing ? "composing" : "idle") {
+		const modeAction = matchModeKey(event, keymap, phase);
+		if (modeAction) return modeAction;
+		if (event.keyCode === HID.BACKSPACE && !(event.modifiers & (KeyModifierFlags.META | KeyModifierFlags.ALT))) return { type: "deleteBack" };
+		if (isComposing && event.modifiers & KeyModifierFlags.CONTROL) return routeControlKey(event);
+		if (isComposing) {
+			const ctrlAction = routeStandardControlKey(event, state, keymap.chordData ? isChordShiftKeyCode(event.keyCode, keymap.chordData) : false);
+			if (ctrlAction) return ctrlAction;
+		}
+		if (keymap.chordData) {
+			const spaceIsChordKey = keymap.chordData.hidToChordKey.has(HID.SPACE);
+			if (!(event.keyCode === HID.SPACE && !spaceIsChordKey)) return routeChord(event, keymap.chordData, isDirectEnglishMode);
+		}
+		if (!isComposing && !isDirectEnglishMode && event.keyCode === HID.SPACE) return {
+			type: "insertSpace",
+			shifted: !!(event.modifiers & KeyModifierFlags.SHIFT)
+		};
+		return routeSequential(event, keymap, isComposing, isDirectEnglishMode, phase);
+	}
+	/** Match modeKeys triggers */
+	function matchModeKey(event, keymap, phase) {
+		const eventMods = event.modifiers & (KeyModifierFlags.SHIFT | KeyModifierFlags.CONTROL | KeyModifierFlags.ALT);
+		for (const withModifiers of [true, false]) for (const entry of keymap.modeKeys) {
+			const t = entry.trigger;
+			if (t.keyCode !== event.keyCode) continue;
+			if (t.modifiers !== 0 !== withModifiers) continue;
+			if (!isActiveIn(entry.when, phase)) continue;
+			if (t.modifiers === 0 || t.modifiers === eventMods) return entry.action;
+		}
+		return null;
+	}
+	/** Ctrl+key → simplified Emacs bindings */
+	function routeControlKey(event) {
+		switch (event.keyCode) {
+			case HID.H: return { type: "deleteBack" };
+			case HID.M: return { type: "confirm" };
+			case HID.G: return { type: "cancel" };
+			case HID.J: return { type: "confirm" };
+			default: return { type: "pass" };
+		}
+	}
+	/** Standard control keys during composing */
+	function routeStandardControlKey(event, _state, isChordShiftKey = false) {
+		if (isChordShiftKey) return null;
+		switch (event.keyCode) {
+			case HID.ENTER:
+			case HID.TAB: return { type: "confirm" };
+			case HID.ESCAPE: return { type: "cancel" };
+			case HID.SPACE: return { type: "convert" };
+			case HID.BACKSPACE: return { type: "deleteBack" };
+			default: return null;
+		}
+	}
+	/** Sequential input routing */
+	function routeSequential(event, keymap, isComposing, isDirectEnglishMode, phase) {
+		if (isDirectEnglishMode) {
+			const chars = event.characters;
+			if (chars.length === 1 && isPrintable(chars)) return {
+				type: "directInsert",
+				text: chars
+			};
+			return { type: "pass" };
+		}
+		const chars = (keymap.definition.base === "positional" && event.modifiers === 0 ? hidToUsLegend(event.keyCode) : void 0) ?? event.characters;
+		if (chars.length !== 1) return { type: "pass" };
+		const c = chars;
+		const logical = keymap.keyRemap[c] ?? c;
+		const seqAction = keymap.sequentialActions.get(logical);
+		if (seqAction && !(event.modifiers & (KeyModifierFlags.CONTROL | KeyModifierFlags.ALT | KeyModifierFlags.META)) && isActiveIn(keymap.sequentialActionGuards.get(logical), phase)) return seqAction;
+		if (keymap.characterMap[logical] || isLetter(logical) || isComposing && isDigit(logical)) return {
+			type: "printable",
+			char: c
+		};
+		if (Object.keys(keymap.inputMappings).length > 0 && isPrintable(c) && c !== " ") return {
+			type: "printable",
+			char: c
+		};
+		return { type: "pass" };
+	}
+	function isPrintable(c) {
+		if (c.length !== 1) return false;
+		const code = c.charCodeAt(0);
+		return code >= 32 && code !== 127;
+	}
+	function isLetter(c) {
+		if (c.length !== 1) return false;
+		return /^[a-zA-Z]$/.test(c);
+	}
+	function isDigit(c) {
+		if (c.length !== 1) return false;
+		return /^[0-9]$/.test(c);
+	}
+	/** Check if a HID key code maps to a chord shift key */
+	function isChordShiftKeyCode(keyCode, chord) {
+		const chordKey = chord.hidToChordKey.get(keyCode);
+		if (!chordKey) return false;
+		return chord.shiftKeys.has(chordKey);
+	}
+	/** Route a key event for chord behavior */
+	function routeChord(event, chord, isDirectEnglishMode) {
+		if (isDirectEnglishMode) {
+			const noModifiers = (event.modifiers & (KeyModifierFlags.SHIFT | KeyModifierFlags.CONTROL | KeyModifierFlags.ALT | KeyModifierFlags.META)) === 0;
+			if (chord.englishLookupTable !== null && noModifiers) {
+				const chordKey = chord.hidToChordKey.get(event.keyCode);
+				if (chordKey) {
+					if (chord.shiftKeys.has(chordKey)) return {
+						type: "chordShiftDown",
+						key: chordKey
+					};
+					return {
+						type: "chordInput",
+						key: chordKey
+					};
+				}
+			}
+			const chars = event.characters;
+			if (chars.length === 1 && isPrintable(chars)) return {
+				type: "directInsert",
+				text: chars
+			};
+			return { type: "pass" };
+		}
+		const chordKey = chord.hidToChordKey.get(event.keyCode);
+		if (!chordKey) return { type: "pass" };
+		if (chord.shiftKeys.has(chordKey)) return {
+			type: "chordShiftDown",
+			key: chordKey
+		};
+		return {
+			type: "chordInput",
+			key: chordKey
+		};
+	}
+	//#endregion
+	//#region src/engine/sequential-buffer.ts
+	/** Sequential input buffer with greedy longest-match resolution */
+	var SequentialBuffer = class {
+		constructor() {
+			this.buffer = "";
+			this.mappings = {};
+			this.prefixSet = /* @__PURE__ */ new Set();
+			this.displayRawKeys = /* @__PURE__ */ new Set();
+			this.dropUnusedPrefix = false;
+			this.pendingLabels = {};
+			this.resolvedKana = "";
+		}
+		/** Update the mapping tables (call when keymap changes) */
+		setMappings(mappings, prefixSet, displayRawKeys = /* @__PURE__ */ new Set(), dropUnusedPrefix = false, pendingLabels = {}) {
+			this.mappings = mappings;
+			this.prefixSet = prefixSet;
+			this.displayRawKeys = displayRawKeys;
+			this.dropUnusedPrefix = dropUnusedPrefix;
+			this.pendingLabels = pendingLabels;
+			this.buffer = "";
+			this.resolvedKana = "";
+		}
+		/** Add a character to the buffer and drain resolved kana.
+		*  Returns the newly resolved kana (may be empty if waiting for more input). */
+		input(char) {
+			this.buffer += char;
+			return this.drain();
+		}
+		/** Force-flush the buffer (before confirm/cancel).
+		*  Returns any remaining kana. */
+		flush() {
+			if (this.buffer.length === 0) return "";
+			return this.drain(true);
+		}
+		/** Delete the last character from the buffer.
+		*  Returns true if a buffer character was deleted, false if buffer was empty. */
+		deleteBack() {
+			if (this.buffer.length > 0) {
+				this.buffer = this.buffer.slice(0, -1);
+				return true;
+			}
+			return false;
+		}
+		/** BS の pending 復帰用: 未解決文字列をバッファ先頭へ戻す（repend が使う） */
+		restore(text) {
+			this.buffer = text + this.buffer;
+		}
+		/** Get current pending buffer text (for display) */
+		get pending() {
+			return this.buffer;
+		}
+		/** Get pending buffer resolved as kana for display (pendingBufferText port)
+		*
+		*  **解決の本体は drain と同じ**（`resolve` を共有）。違うのは「続きを待つ」ところに
+		*  来たときの見せ方だけで、そこは `displayRawKeys`（配列の意思か既定の受け皿か）で決める。
+		*
+		*  かつてここだけが独自に exact 一致を優先していたため、ローマ字の `n` が「ん」に化け、
+		*  次に `a` を打つと「な」へ巻き戻って見えた（バッファ側は正しく `n` を保持していたので、
+		*  **表示だけの不一致**だった）。同じ表に 2 つの解決規則を置かないこと。 */
+		get pendingDisplay() {
+			const { kana, rest } = this.resolve(this.buffer, false);
+			if (rest.length === 0) return kana;
+			const exact = this.mappings[rest];
+			if (exact !== void 0 && !this.displayRawKeys.has(rest)) return kana + exact;
+			const label = Object.hasOwn(this.pendingLabels, rest) ? this.pendingLabels[rest] : void 0;
+			if (label !== void 0) return kana + label;
+			return kana + rest;
+		}
+		/** Whether the buffer is empty */
+		get isEmpty() {
+			return this.buffer.length === 0;
+		}
+		/** Reset buffer state */
+		reset() {
+			this.buffer = "";
+			this.resolvedKana = "";
+		}
+		/** Drain the buffer using greedy longest-match + backtracking.
+		*  Port of drainSequentialBuffer (InputManager.swift L477-515) */
+		drain(force = false) {
+			const { kana, rest } = this.resolve(this.buffer, force);
+			this.buffer = rest;
+			return kana;
+		}
+		/** 解決規則の本体。**非破壊**（バッファを触らない）なので表示側からも呼べる。
+		*
+		*  戻り値 = `{ kana: 解決できた分, rest: 続きを待って残った分 }`。
+		*  `force`（確定直前の flush）では待たずに出し切るので `rest` は必ず空になる。 */
+		resolve(buffer, force) {
+			let output = "";
+			while (buffer.length > 0) {
+				const hasMatch = this.mappings[buffer] !== void 0;
+				const isPrefix = this.prefixSet.has(buffer);
+				if (hasMatch && (!isPrefix || force)) {
+					output += this.mappings[buffer];
+					buffer = "";
+				} else if (isPrefix && !force) return {
+					kana: output,
+					rest: buffer
+				};
+				else {
+					let resolved = false;
+					for (let len = buffer.length - 1; len >= 1; len--) {
+						const prefix = buffer.slice(0, len);
+						if (this.mappings[prefix] !== void 0) {
+							output += this.mappings[prefix];
+							buffer = buffer.slice(len);
+							resolved = true;
+							break;
+						}
+					}
+					if (!resolved) {
+						if (!(this.dropUnusedPrefix && this.prefixSet.has(buffer[0]))) output += buffer[0];
+						buffer = buffer.slice(1);
+					}
+				}
+			}
+			return {
+				kana: output,
+				rest: ""
+			};
+		}
+	};
+	//#endregion
+	//#region src/engine/simultaneous-buffer.ts
+	/**
+	* Simultaneous key buffer — eager output + rollback.
+	*
+	* 1st key → output single-hit immediately (0ms delay)
+	* 2nd key within window → rollback and replace with chord result
+	* 3rd key within window → try triple chord, else confirm and start fresh
+	* Shift key → no eager output, wait for timer
+	*/
+	var SimultaneousKeyBuffer = class SimultaneousKeyBuffer {
+		static {
+			this.EMPTY_LOOKUP = /* @__PURE__ */ new Map();
+		}
+		static {
+			this.EMPTY_SPECIALS = /* @__PURE__ */ new Map();
+		}
+		static {
+			this.EMPTY_GUARDS = /* @__PURE__ */ new Map();
+		}
+		/** 現在のモードの lookup テーブル */
+		lookup() {
+			return this.englishMode ? this.chord.englishLookupTable ?? SimultaneousKeyBuffer.EMPTY_LOOKUP : this.chord.lookupTable;
+		}
+		/** 現在のモードの specialActions テーブル */
+		specials() {
+			return this.englishMode ? this.chord.englishSpecialActions ?? SimultaneousKeyBuffer.EMPTY_SPECIALS : this.chord.specialActions;
+		}
+		guards() {
+			return this.englishMode ? this.chord.englishSpecialActionGuards ?? SimultaneousKeyBuffer.EMPTY_GUARDS : this.chord.specialActionGuards;
+		}
+		/**
+		* その組合せの specialAction。**局面ガードが外れていれば「定義が無い」ものとして扱う**
+		* （lookupTable にあればそちらが出て、無ければ fall-through する）。
+		*/
+		specialAt(bits) {
+			const action = this.specials().get(bits);
+			if (action === void 0) return void 0;
+			const when = this.guards().get(bits);
+			if (when && this.hostPhase && !isActiveIn(when, this.hostPhase())) return void 0;
+			return action;
+		}
+		hasSpecialAt(bits) {
+			return this.specialAt(bits) !== void 0;
+		}
+		/** シフト役の単打アクション。局面ガードが外れていれば無し扱い */
+		singleTapAt(key) {
+			const action = this.chord.shiftSingleTapActions.get(key);
+			if (action === void 0) return void 0;
+			const when = this.chord.shiftSingleTapGuards.get(key);
+			if (when && this.hostPhase && !isActiveIn(when, this.hostPhase())) return void 0;
+			return action;
+		}
+		constructor(chord) {
+			this.state = { type: "idle" };
+			this.timerId = null;
+			this.pressedKeys = /* @__PURE__ */ new Set();
+			this.windowOverride = null;
+			this.englishMode = false;
+			this.hostPhase = null;
+			this.onOutput = null;
+			this.onShiftSingle = null;
+			this.onSpecialAction = null;
+			this.mutualOrder = [];
+			this.mutualGroup = /* @__PURE__ */ new Set();
+			this.mutualCharCount = 0;
+			this.mutualPending = null;
+			this.mutualOutputted = false;
+			this.chord = chord;
+		}
+		/** Process key down */
+		keyDown(key) {
+			if (this.chord.judgment === "mutual") {
+				this.mutualKeyDown(key);
+				return;
+			}
+			this.pressedKeys.add(key);
+			switch (this.state.type) {
+				case "idle":
+					this.handleFirstKey(key);
+					break;
+				case "waiting":
+					this.handleSecondKey(key, this.state.firstKey, this.state.firstOutput, this.state.firstCharCount);
+					break;
+				case "waitingThird":
+					this.handleThirdKey(key, this.state.bufferedKeys, this.state.bits, this.state.charCount, this.state.pendingAction);
+					break;
+				case "shiftHeld":
+					this.handleShiftHeldKey(key, this.state.shiftKey, this.state.used);
+					break;
+			}
+		}
+		/** Process key up */
+		keyUp(key) {
+			if (this.chord.judgment === "mutual") {
+				this.mutualKeyUp(key);
+				return;
+			}
+			this.pressedKeys.delete(key);
+			if (this.state.type === "shiftHeld" && this.state.shiftKey === key) {
+				if (!this.state.used) {
+					const action = this.singleTapAt(key);
+					if (action) this.onShiftSingle?.(action);
+				}
+				this.state = { type: "idle" };
+			}
+		}
+		/** Reset buffer */
+		reset() {
+			this.cancelTimer();
+			this.state = { type: "idle" };
+			this.clearMutualGroup();
+		}
+		/**
+		* 相互シフト方式の keyDown。
+		* 「押下中キー集合 + 新キー」の組合せがテーブルにあるかだけで chord / fall-through を判定する。
+		*/
+		mutualKeyDown(key) {
+			if (this.pressedKeys.has(key)) return;
+			this.pressedKeys.add(key);
+			const bit = this.getBit(key);
+			if (bit === void 0) return;
+			if (this.mutualGroup.has(key)) {
+				this.resolveMutualGroup();
+				this.startMutualGroup(key);
+				return;
+			}
+			if (this.mutualGroup.size === 0) {
+				this.startMutualGroup(key);
+				return;
+			}
+			let candidate = bit;
+			for (const k of this.mutualGroup) candidate += this.getBit(k) ?? 0;
+			if (this.lookup().has(candidate) || this.hasSpecialAt(candidate)) {
+				this.mutualGroup.add(key);
+				this.mutualOrder.push(key);
+				this.evaluateMutualChord(candidate);
+			} else {
+				this.resolveMutualGroup();
+				this.startMutualGroup(key);
+			}
+		}
+		/** 相互シフト方式の keyUp */
+		mutualKeyUp(key) {
+			this.pressedKeys.delete(key);
+			if (this.pressedKeys.size === 0) {
+				this.finalizeMutual();
+				return;
+			}
+			if (this.mutualGroup.has(key) && (this.mutualOutputted || this.mutualPending !== null)) {
+				const pending = this.mutualPending;
+				if (pending !== null) {
+					this.mutualPending = null;
+					this.mutualOutputted = true;
+				}
+				this.mutualGroup.delete(key);
+				const idx = this.mutualOrder.indexOf(key);
+				if (idx >= 0) this.mutualOrder.splice(idx, 1);
+				this.mutualCharCount = 0;
+				if (pending !== null) this.onSpecialAction?.(pending);
+			}
+		}
+		/** グループを chord 評価する（lookup 優先、なければ specialAction を保留） */
+		evaluateMutualChord(bits) {
+			const text = this.lookup().get(bits);
+			if (text !== void 0) {
+				this.onOutput?.(text, this.mutualCharCount);
+				this.mutualCharCount = text.length;
+				this.mutualPending = null;
+				this.mutualOutputted = true;
+				return;
+			}
+			const action = this.specialAt(bits);
+			if (action) {
+				if (this.mutualCharCount > 0) {
+					this.onOutput?.("", this.mutualCharCount);
+					this.mutualCharCount = 0;
+				}
+				this.mutualPending = action;
+				this.mutualOutputted = false;
+			}
+		}
+		/**
+		* 現グループを解決する（fall-through / グループ在籍キー再打鍵時）。
+		* chord 出力済みなら何もしない。specialAction 保留中なら発火。
+		* 未出力なら押下順に単打出力する。解決後グループは空（disarm）。
+		*/
+		resolveMutualGroup() {
+			if (this.mutualPending !== null) this.onSpecialAction?.(this.mutualPending);
+			else if (!this.mutualOutputted) for (const k of this.mutualOrder) this.mutualSingleTap(k);
+			this.clearMutualGroup();
+		}
+		/** 全キーリリース時の確定。単打はここで出力される（chord は keyDown 時に出力済み） */
+		finalizeMutual() {
+			if (this.mutualGroup.size === 1) {
+				if (!this.mutualOutputted) {
+					const only = this.mutualOrder[0];
+					if (only !== void 0) this.mutualSingleTap(only);
+				}
+			} else if (this.mutualGroup.size >= 2) {
+				if (this.mutualPending !== null) this.onSpecialAction?.(this.mutualPending);
+				else if (!this.mutualOutputted) for (const k of this.mutualOrder) this.mutualSingleTap(k);
+			}
+			this.clearMutualGroup();
+		}
+		/** 単打出力（シフトキー → 単打アクション、specialAction 優先、なければ文字） */
+		mutualSingleTap(key) {
+			if (this.chord.shiftKeys.has(key)) {
+				const action = this.singleTapAt(key);
+				if (action) this.onShiftSingle?.(action);
+				return;
+			}
+			const bit = this.getBit(key);
+			if (bit === void 0) return;
+			const action = this.specialAt(bit);
+			if (action) {
+				this.onSpecialAction?.(action);
+				return;
+			}
+			const text = this.lookup().get(bit);
+			if (text !== void 0) this.onOutput?.(text, 0);
+		}
+		startMutualGroup(key) {
+			this.mutualGroup = /* @__PURE__ */ new Set([key]);
+			this.mutualOrder = [key];
+		}
+		clearMutualGroup() {
+			this.mutualGroup.clear();
+			this.mutualOrder = [];
+			this.mutualCharCount = 0;
+			this.mutualPending = null;
+			this.mutualOutputted = false;
+		}
+		handleFirstKey(key) {
+			const bits = this.getBit(key);
+			if (!bits) return;
+			if (this.chord.shiftKeys.has(key)) {
+				this.state = {
+					type: "waiting",
+					firstKey: key,
+					firstOutput: null,
+					firstCharCount: 0
+				};
+				this.startTimer();
+			} else {
+				const singleChar = this.lookup().get(bits);
+				if (singleChar) {
+					this.onOutput?.(singleChar, 0);
+					this.state = {
+						type: "waiting",
+						firstKey: key,
+						firstOutput: singleChar,
+						firstCharCount: singleChar.length
+					};
+					this.startTimer();
+				} else {
+					this.state = {
+						type: "waiting",
+						firstKey: key,
+						firstOutput: null,
+						firstCharCount: 0
+					};
+					this.startTimer();
+				}
+			}
+		}
+		handleSecondKey(key, firstKey, firstOutput, firstCharCount) {
+			this.cancelTimer();
+			if (key === firstKey) {
+				this.state = { type: "idle" };
+				this.handleFirstKey(key);
+				return;
+			}
+			const firstBit = this.getBit(firstKey);
+			const keyBit = this.getBit(key);
+			if (!firstBit || !keyBit) return;
+			const combined = firstBit + keyBit;
+			const specialAction = this.specialAt(combined);
+			if (specialAction) {
+				if (firstCharCount > 0) this.onOutput?.("", firstCharCount);
+				const keys = /* @__PURE__ */ new Set([firstKey, key]);
+				this.state = {
+					type: "waitingThird",
+					bufferedKeys: keys,
+					bits: combined,
+					charCount: 0,
+					pendingAction: specialAction
+				};
+				this.startTimer();
+				return;
+			}
+			const simultaneousResult = this.lookup().get(combined);
+			if (simultaneousResult) {
+				if (firstCharCount > 0) this.onOutput?.(simultaneousResult, firstCharCount);
+				else this.onOutput?.(simultaneousResult, 0);
+				const keys = /* @__PURE__ */ new Set([firstKey, key]);
+				this.state = {
+					type: "waitingThird",
+					bufferedKeys: keys,
+					bits: combined,
+					charCount: simultaneousResult.length,
+					pendingAction: null
+				};
+				this.startTimer();
+			} else if (firstOutput === null) {
+				if (this.chord.shiftKeys.has(firstKey)) {
+					const action = this.singleTapAt(firstKey);
+					if (action) this.onShiftSingle?.(action);
+				} else {
+					const firstBits = this.getBit(firstKey);
+					const pendingAction2 = firstBits ? this.specialAt(firstBits) : null;
+					if (pendingAction2) this.onSpecialAction?.(pendingAction2);
+				}
+				this.state = { type: "idle" };
+				this.handleFirstKey(key);
+			} else {
+				const keys = /* @__PURE__ */ new Set([firstKey, key]);
+				const singleChar = this.lookup().get(keyBit);
+				if (singleChar) {
+					this.onOutput?.(singleChar, 0);
+					this.state = {
+						type: "waitingThird",
+						bufferedKeys: keys,
+						bits: combined,
+						charCount: firstCharCount + singleChar.length,
+						pendingAction: null
+					};
+				} else this.state = {
+					type: "waitingThird",
+					bufferedKeys: keys,
+					bits: combined,
+					charCount: firstCharCount,
+					pendingAction: null
+				};
+				this.startTimer();
+			}
+		}
+		handleThirdKey(key, bufferedKeys, existingBits, charCount, pendingAction) {
+			this.cancelTimer();
+			if (bufferedKeys.has(key)) {
+				if (pendingAction) this.onSpecialAction?.(pendingAction);
+				this.state = { type: "idle" };
+				this.handleFirstKey(key);
+				return;
+			}
+			const keyBit = this.getBit(key);
+			if (!keyBit) return;
+			const tripleKeys = existingBits + keyBit;
+			const tripleResult = this.lookup().get(tripleKeys);
+			if (tripleResult) {
+				this.onOutput?.(tripleResult, charCount);
+				this.state = { type: "idle" };
+			} else {
+				if (pendingAction) this.onSpecialAction?.(pendingAction);
+				this.state = { type: "idle" };
+				this.handleFirstKey(key);
+			}
+		}
+		handleShiftHeldKey(key, shiftKey, used) {
+			if (key === shiftKey) return;
+			const shiftBit = this.getBit(shiftKey);
+			const keyBit = this.getBit(key);
+			if (!shiftBit || !keyBit) return;
+			const combined = shiftBit + keyBit;
+			const specialAction = this.specialAt(combined);
+			if (specialAction) {
+				this.onSpecialAction?.(specialAction);
+				this.state = {
+					type: "shiftHeld",
+					shiftKey,
+					used: true
+				};
+				return;
+			}
+			const shifted = this.lookup().get(combined);
+			if (shifted) {
+				this.onOutput?.(shifted, 0);
+				this.state = {
+					type: "shiftHeld",
+					shiftKey,
+					used: true
+				};
+				return;
+			}
+			if (!used) {
+				const action = this.singleTapAt(shiftKey);
+				if (action) this.onShiftSingle?.(action);
+			}
+			this.state = { type: "idle" };
+			this.handleFirstKey(key);
+		}
+		startTimer() {
+			this.cancelTimer();
+			this.timerId = setTimeout(() => {
+				this.timerId = null;
+				this.onTimerExpired();
+			}, this.windowOverride ?? this.chord.simultaneousWindow);
+		}
+		cancelTimer() {
+			if (this.timerId !== null) {
+				clearTimeout(this.timerId);
+				this.timerId = null;
+			}
+		}
+		onTimerExpired() {
+			switch (this.state.type) {
+				case "waiting": {
+					const { firstKey } = this.state;
+					if (this.chord.shiftKeys.has(firstKey)) if (this.pressedKeys.has(firstKey)) this.state = {
+						type: "shiftHeld",
+						shiftKey: firstKey,
+						used: false
+					};
+					else {
+						const action = this.singleTapAt(firstKey);
+						if (action) this.onShiftSingle?.(action);
+						this.state = { type: "idle" };
+					}
+					else {
+						const bits = this.getBit(firstKey);
+						if (bits) {
+							const pendingAction = this.specialAt(bits);
+							if (pendingAction) this.onSpecialAction?.(pendingAction);
+						}
+						this.state = { type: "idle" };
+					}
+					break;
+				}
+				case "waitingThird": {
+					const { pendingAction } = this.state;
+					if (pendingAction) this.onSpecialAction?.(pendingAction);
+					const heldShift = this.findHeldShiftKey();
+					if (heldShift) this.state = {
+						type: "shiftHeld",
+						shiftKey: heldShift,
+						used: true
+					};
+					else this.state = { type: "idle" };
+					break;
+				}
+			}
+		}
+		getBit(key) {
+			return this.chord.keyBits.get(key);
+		}
+		/** Find a shift key that is still physically pressed */
+		findHeldShiftKey() {
+			for (const key of this.pressedKeys) if (this.chord.shiftKeys.has(key)) return key;
+			return null;
+		}
+	};
+	//#endregion
+	//#region src/engine/input-engine.ts
+	/** 拗音の小書き（postModifyYouon: "base" で基字へ効かせる対象） */
+	const SMALL_YOUON = /* @__PURE__ */ new Set([
+		"ゃ",
+		"ゅ",
+		"ょ"
+	]);
+	/** 拗音の基字（い段の子音）。これ以外の字 + ゃ（「あゃ」など）は拗音ではないので末尾に効かせる */
+	const YOUON_BASE = /* @__PURE__ */ new Set([..."きぎしじちぢにひびぴみり"]);
+	var InputEngine = class {
+		constructor(keymap) {
+			this.confirmedText = "";
+			this.composingKana = "";
+			this.cursor = 0;
+			this.inputMode = "japanese";
+			this.buffer = new SequentialBuffer();
+			this.chordBuffer = null;
+			this.onStateChange = null;
+			this.onHostAction = null;
+			this.hostPhase = null;
+			this.keymap = keymap;
+			this.buffer.setMappings(keymap.inputMappings, keymap.prefixSet, keymap.displayRawKeys, keymap.dropUnusedPrefix, keymap.pendingLabels);
+			this.setupChordBuffer(keymap);
+		}
+		/** Switch to a different keymap */
+		setKeymap(keymap) {
+			this.confirmComposition();
+			this.keymap = keymap;
+			this.buffer.setMappings(keymap.inputMappings, keymap.prefixSet, keymap.displayRawKeys, keymap.dropUnusedPrefix, keymap.pendingLabels);
+			this.chordBuffer?.reset();
+			this.setupChordBuffer(keymap);
+		}
+		/** Process a key event and return the updated state */
+		processKey(event) {
+			const isComposing = this.composingKana.length > 0 || !this.buffer.isEmpty;
+			const state = isComposing ? "composing" : "idle";
+			const isEnglish = this.inputMode === "english";
+			const action = routeKey(event, this.keymap, isComposing, state, isEnglish, this.phase);
+			this.executeAction(action);
+			return this.getState();
+		}
+		/** Process a key up event (for chord buffer) */
+		processKeyUp(event) {
+			if (this.chordBuffer && this.keymap.chordData) {
+				const chordKey = this.keymap.chordData.hidToChordKey.get(event.keyCode);
+				if (chordKey) this.chordBuffer.keyUp(chordKey);
+			}
+			return this.getState();
+		}
+		/** Get current state */
+		/**
+		* このエンジン自身が合成中か（よみ or ローマ字バッファを保持している）。
+		*
+		* `getState()` は `phase` を含み、`phase` は `hostPhase()` を呼ぶ。セッション側が
+		* `hostPhase` の中で `getState()` を見ると**無限再帰**になるので、問い合わせ用に
+		* 副作用の無いこちらを公開している。
+		*/
+		get isComposing() {
+			return this.composingKana.length > 0 || !this.buffer.isEmpty;
+		}
+		/**
+		* 現在の局面。所有者（セッション層）が居ればそちらを正とし、居なければ自分の
+		* 合成状態から導出する。
+		*/
+		get phase() {
+			if (this.hostPhase) return this.hostPhase();
+			return this.isComposing ? "composing" : "idle";
+		}
+		getState() {
+			const isComposing = this.composingKana.length > 0 || !this.buffer.isEmpty;
+			return {
+				composingCursor: this.cursor,
+				phase: this.phase,
+				confirmedText: this.confirmedText,
+				composingKana: this.composingKana,
+				pendingBuffer: this.buffer.pending,
+				pendingDisplay: this.buffer.pendingDisplay,
+				inputMode: this.inputMode,
+				isComposing
+			};
+		}
+		/**
+		* 確定済みテキストを取り出して内部バッファをクリアする（差分取り出し用）。
+		*
+		* `getState().confirmedText` は確定かなを accumulate し続けるため、確定分を
+		* 外部バッファ（例: QuuBee → Mozc）へ流し込むホストは、状態変化のたびに本メソッドで
+		* 確定分だけを引き取ってエンジン側を空にできる。composing / inputMode には影響しない。
+		*
+		* 注意: 取り出し後は confirmedText が空になるため、composing が空の状態での
+		* `deleteBack` はエンジン内で消す対象を持たない（確定済みテキストの所有権はホスト側へ移る）。
+		*/
+		takeConfirmedText() {
+			const text = this.confirmedText;
+			this.confirmedText = "";
+			return text;
+		}
+		/**
+		* 合成中のかなのうち、**かなにならずに残った打鍵**の区間（v2.6.0+）。
+		*
+		* ローマ字表のどの綴りにも当たらない打鍵は、逐次バッファが先頭の 1 字を
+		* そのまま出す（`ks` → `k` が残る）。これは誤打の確かな印になる
+		* （hechima composer.md §2.4(a) の「強いマーク」）。
+		*
+		* 判定は「**綴りの頭になりうる英字**がかなのあいだに残っているか」で、状態を持たない。
+		* Shift で打った大文字（`IME`）は綴りの頭にならないので含まれない。
+		* かなを直接出す配列（chord / フリック / ゲームパッド）では常に空になる。
+		*/
+		residueRanges() {
+			const ranges = [];
+			let i = 0;
+			for (const ch of this.composingKana) {
+				if (/^[a-z]$/.test(ch) && (this.keymap.prefixSet.has(ch) || this.keymap.inputMappings[ch] !== void 0)) {
+					const last = ranges[ranges.length - 1];
+					if (last && last.end === i) last.end = i + 1;
+					else ranges.push({
+						start: i,
+						end: i + 1
+					});
+				}
+				i++;
+			}
+			return ranges;
+		}
+		/**
+		* かなカーソルを動かす（v2.7.0）。`pos` は `composingKana` のコードポイント位置で、
+		* 範囲外は端に丸める。以後の打鍵・BS・後置変調・直接追加はこの位置で効く。
+		*
+		* 動かす前に、**進行中の入力をいまの位置で閉じる**:
+		* - 逐次バッファの待ち（ローマ字の途中）は出し切る。かなにならない打鍵は英字のまま残る
+		*   （標準 IME でも途中のローマ字は移動で確定する）。残った英字は `residueRanges()` に載る
+		* - 同時打鍵の窓は閉じる。先出しした文字はそのまま残り、以後の打鍵で差し替えない
+		*   （差し替えはカーソルの手前を消すので、動いた後に来ると別の文字を消してしまう）。
+		*   窓の中で保留していた単打の特殊アクションは捨てる
+		*
+		* 合成していないとき（かなが空）は何もしない。
+		*/
+		setComposingCursor(pos) {
+			const pending = this.buffer.flush();
+			if (pending) this.insertAtCursor(pending);
+			this.chordBuffer?.reset();
+			const len = [...this.composingKana].length;
+			this.cursor = Math.max(0, Math.min(len, Math.trunc(pos)));
+			return this.getState();
+		}
+		/** ゲームパッド等から直接かなを composingKana に追加（カーソル位置に入る） */
+		appendDirectKana(kana) {
+			this.insertAtCursor(kana);
+			return this.getState();
+		}
+		/** confirmedText に直接テキストを挿入（改行等、composing を経由しない） */
+		insertConfirmedText(text) {
+			this.confirmComposition();
+			this.confirmedText += text;
+			return this.getState();
+		}
+		/** カーソルの手前 replaceCount 字を差し替え（eager output の巻き戻し用） */
+		replaceDirectKana(kana, replaceCount) {
+			this.deleteBeforeCursor(replaceCount);
+			this.insertAtCursor(kana);
+			return this.getState();
+		}
+		/** composingKana 末尾の濁点/半濁点/清音をトグル（か→が→か、は→ば→ぱ→は） */
+		applyToggleDakuten() {
+			return this.applyPostModify("cycleDakuten");
+		}
+		/** composingKana 末尾を拗音/小書きに変換。対象外なら「っ」を追加 */
+		applyYouon() {
+			return this.applyPostModify("small");
+		}
+		/**
+		* composingKana 末尾 1 字に後置変調を適用する。
+		*
+		* **対象の正は「合成テキストの所有者」が持つ**（docs/keymap-v2-requirements.md D4）。
+		* このエンジンが合成中はエンジンが所有者なので `composingKana` の末尾でよい。
+		* 合成していないときは所有者がセッション層側なので、ここでは何もしない
+		* （その経路はセッション層の postModify プリミティブの担当。別便）。
+		*/
+		applyPostModify(op) {
+			if (this.cursor === 0) return this.getState();
+			const chars = [...this.composingKana];
+			const target = chars[this.cursor - 1];
+			const cycles = this.keymap.postModifyCycles;
+			if (this.keymap.postModifyYouon === "base" && op !== "small" && SMALL_YOUON.has(target) && this.cursor >= 2 && YOUON_BASE.has(chars[this.cursor - 2])) {
+				const base = postModify(chars[this.cursor - 2], op, cycles);
+				if (base === null) return this.getState();
+				this.deleteBeforeCursor(2);
+				this.insertAtCursor(base + target);
+				return this.getState();
+			}
+			const next = postModify(target, op, cycles);
+			if (next === null) return this.getState();
+			this.deleteBeforeCursor(1);
+			this.insertAtCursor(next);
+			return this.getState();
+		}
+		/** Reset all state */
+		reset() {
+			this.confirmedText = "";
+			this.setComposing("", 0);
+			this.inputMode = "japanese";
+			this.buffer.reset();
+			this.chordBuffer?.reset();
+			this.syncChordBufferMode();
+		}
+		/** chord バッファの参照テーブルを inputMode に同期する（iOS の syncChordBufferTables 相当） */
+		syncChordBufferMode() {
+			if (this.chordBuffer) this.chordBuffer.englishMode = this.inputMode === "english";
+		}
+		/** Whether this engine uses chord input */
+		get isChord() {
+			return this.chordBuffer !== null;
+		}
+		/** Override the simultaneous window (ms). null = use keymap default. */
+		setSimultaneousWindow(ms) {
+			if (this.chordBuffer) this.chordBuffer.windowOverride = ms;
+		}
+		setupChordBuffer(keymap) {
+			if (keymap.chordData) {
+				this.chordBuffer = new SimultaneousKeyBuffer(keymap.chordData);
+				this.chordBuffer.hostPhase = () => this.phase;
+				this.syncChordBufferMode();
+				this.chordBuffer.onOutput = (text, replaceCount) => {
+					if (this.inputMode === "english") {
+						if (replaceCount > 0) {
+							const chars = [...this.confirmedText];
+							this.confirmedText = chars.slice(0, Math.max(0, chars.length - replaceCount)).join("");
+						}
+						this.confirmedText += text;
+						this.onStateChange?.();
+						return;
+					}
+					this.deleteBeforeCursor(replaceCount);
+					if (text.length > 0) this.insertAtCursor(text);
+					this.onStateChange?.();
+				};
+				this.chordBuffer.onShiftSingle = (action) => {
+					this.executeAction(action);
+					this.onStateChange?.();
+				};
+				this.chordBuffer.onSpecialAction = (action) => {
+					this.executeAction(action);
+					this.onStateChange?.();
+				};
+			} else this.chordBuffer = null;
+		}
+		executeAction(action) {
+			switch (action.type) {
+				case "printable":
+					this.handlePrintable(action.char);
+					break;
+				case "confirm":
+					if (this.onHostAction?.(action)) break;
+					this.confirmComposition();
+					break;
+				case "cancel":
+					this.cancelComposition();
+					break;
+				case "deleteBack":
+					if (this.onHostAction?.(action)) break;
+					this.handleDeleteBack();
+					break;
+				case "toggleInputMode":
+					this.confirmComposition();
+					this.chordBuffer?.reset();
+					this.inputMode = this.inputMode === "japanese" ? "english" : "japanese";
+					this.syncChordBufferMode();
+					break;
+				case "switchToEnglish":
+					this.confirmComposition();
+					this.chordBuffer?.reset();
+					this.inputMode = "english";
+					this.syncChordBufferMode();
+					break;
+				case "switchToJapanese":
+					this.chordBuffer?.reset();
+					this.inputMode = "japanese";
+					this.syncChordBufferMode();
+					break;
+				case "insertAndConfirm":
+					if (this.onHostAction?.(action)) break;
+					this.insertAtCursor(action.text);
+					this.confirmComposition();
+					break;
+				case "directInsert":
+					this.confirmedText += action.text;
+					break;
+				case "insertSpace":
+					if (this.onHostAction?.(action)) break;
+					if (this.inputMode === "japanese") this.confirmedText += action.shifted ? " " : "　";
+					else this.confirmedText += " ";
+					break;
+				case "convert":
+					if (this.onHostAction?.(action)) break;
+					if (this.composingKana.length > 0 || !this.buffer.isEmpty) this.confirmComposition();
+					else this.executeAction({
+						type: "insertSpace",
+						shifted: false
+					});
+					break;
+				case "chordInput":
+					this.chordBuffer?.keyDown(action.key);
+					break;
+				case "chordShiftDown":
+					this.chordBuffer?.keyDown(action.key);
+					break;
+				case "chordKeyUp":
+					this.chordBuffer?.keyUp(action.key);
+					break;
+				case "moveLeft":
+				case "moveRight":
+				case "moveUp":
+				case "moveDown":
+				case "editSegmentLeft":
+				case "editSegmentRight":
+					if (this.onHostAction?.(action)) break;
+					this.confirmComposition();
+					break;
+				case "postModify":
+					if (this.isComposing) this.applyPostModify(action.op);
+					else this.onHostAction?.(action);
+					break;
+				case "pass": break;
+			}
+		}
+		handlePrintable(char) {
+			const logical = this.keymap.keyRemap[char] ?? char;
+			const charMapResult = this.keymap.characterMap[logical];
+			if (charMapResult && !this.wouldBufferHandle(logical)) {
+				if (!/^[a-zA-Z]$/.test(logical)) {
+					const pending = this.buffer.flush();
+					if (pending) this.insertAtCursor(pending);
+					this.insertAtCursor(charMapResult);
+					return;
+				}
+			}
+			const resolved = this.buffer.input(logical);
+			if (resolved) this.insertAtCursor(resolved);
+		}
+		/** Check if the sequential buffer's inputMappings would handle this character */
+		wouldBufferHandle(char) {
+			const testBuf = this.buffer.pending + char;
+			return this.keymap.prefixSet.has(testBuf) || this.keymap.inputMappings[testBuf] !== void 0;
+		}
+		confirmComposition() {
+			const remaining = this.buffer.flush();
+			if (remaining) this.insertAtCursor(remaining);
+			if (this.composingKana.length > 0) {
+				this.confirmedText += this.composingKana;
+				this.setComposing("", 0);
+			}
+			this.chordBuffer?.reset();
+		}
+		cancelComposition() {
+			this.setComposing("", 0);
+			this.buffer.reset();
+			this.chordBuffer?.reset();
+		}
+		/**
+		* BS で「素通しされた未解決ローマ字」まで戻ったとき、それを逐次バッファへ復帰させる (v1.6.0)。
+		*
+		* greedy マッチは語彙外の先頭を素通しで composingKana に積む（例: dka → 「dか」。
+		* dk が語彙外なので d が素通しされた）。BS で「d」まで戻してもそれは解決済みかな扱いに
+		* なり、続く a が「dあ」になってしまう。実 IME は未解決チャンクの raw を保つので「だ」に
+		* なる — その挙動に合わせる。hechima セッション層（内蔵ローマ字）の v0.13.1 と同じ設計で、
+		* 戻すのは「続きを待てる」最長の末尾だけ（kt なら t、sh なら sh）。
+		*/
+		repend() {
+			if (!this.buffer.isEmpty) return;
+			const before = [...this.composingKana].slice(0, this.cursor).join("");
+			const run = /[a-zA-Z]+$/.exec(before)?.[0];
+			if (!run) return;
+			for (let i = 0; i < run.length; i++) {
+				const tail = run.slice(i);
+				if (this.keymap.prefixSet.has(tail)) {
+					this.deleteBeforeCursor(tail.length);
+					this.buffer.restore(tail);
+					return;
+				}
+			}
+		}
+		setComposing(kana, cursor) {
+			this.composingKana = kana;
+			this.cursor = cursor;
+		}
+		insertAtCursor(text) {
+			if (!text) return;
+			const chars = [...this.composingKana];
+			const added = [...text];
+			chars.splice(this.cursor, 0, ...added);
+			this.setComposing(chars.join(""), this.cursor + added.length);
+		}
+		deleteBeforeCursor(count) {
+			if (count <= 0) return;
+			const chars = [...this.composingKana];
+			const from = Math.max(0, this.cursor - count);
+			chars.splice(from, this.cursor - from);
+			this.setComposing(chars.join(""), from);
+		}
+		handleDeleteBack() {
+			if (this.buffer.deleteBack()) return;
+			if (this.cursor > 0) {
+				this.deleteBeforeCursor(1);
+				this.repend();
+				return;
+			}
+			if (this.composingKana.length > 0) return;
+			if (this.confirmedText.length > 0) {
+				const chars = [...this.confirmedText];
+				chars.pop();
+				this.confirmedText = chars.join("");
+			}
+		}
+	};
+	//#endregion
+	//#region node_modules/react/cjs/react.development.js
+	/**
+	* @license React
+	* react.development.js
+	*
+	* Copyright (c) Meta Platforms, Inc. and affiliates.
+	*
+	* This source code is licensed under the MIT license found in the
+	* LICENSE file in the root directory of this source tree.
+	*/
+	var require_react_development = /* @__PURE__ */ __commonJSMin(((exports, module) => {
+		(function() {
+			function defineDeprecationWarning(methodName, info) {
+				Object.defineProperty(Component.prototype, methodName, { get: function() {
+					console.warn("%s(...) is deprecated in plain JavaScript React classes. %s", info[0], info[1]);
+				} });
+			}
+			function getIteratorFn(maybeIterable) {
+				if (null === maybeIterable || "object" !== typeof maybeIterable) return null;
+				maybeIterable = MAYBE_ITERATOR_SYMBOL && maybeIterable[MAYBE_ITERATOR_SYMBOL] || maybeIterable["@@iterator"];
+				return "function" === typeof maybeIterable ? maybeIterable : null;
+			}
+			function warnNoop(publicInstance, callerName) {
+				publicInstance = (publicInstance = publicInstance.constructor) && (publicInstance.displayName || publicInstance.name) || "ReactClass";
+				var warningKey = publicInstance + "." + callerName;
+				didWarnStateUpdateForUnmountedComponent[warningKey] || (console.error("Can't call %s on a component that is not yet mounted. This is a no-op, but it might indicate a bug in your application. Instead, assign to `this.state` directly or define a `state = {};` class property with the desired state in the %s component.", callerName, publicInstance), didWarnStateUpdateForUnmountedComponent[warningKey] = !0);
+			}
+			function Component(props, context, updater) {
+				this.props = props;
+				this.context = context;
+				this.refs = emptyObject;
+				this.updater = updater || ReactNoopUpdateQueue;
+			}
+			function ComponentDummy() {}
+			function PureComponent(props, context, updater) {
+				this.props = props;
+				this.context = context;
+				this.refs = emptyObject;
+				this.updater = updater || ReactNoopUpdateQueue;
+			}
+			function noop() {}
+			function testStringCoercion(value) {
+				return "" + value;
+			}
+			function checkKeyStringCoercion(value) {
+				try {
+					testStringCoercion(value);
+					var JSCompiler_inline_result = !1;
+				} catch (e) {
+					JSCompiler_inline_result = !0;
+				}
+				if (JSCompiler_inline_result) {
+					JSCompiler_inline_result = console;
+					var JSCompiler_temp_const = JSCompiler_inline_result.error;
+					var JSCompiler_inline_result$jscomp$0 = "function" === typeof Symbol && Symbol.toStringTag && value[Symbol.toStringTag] || value.constructor.name || "Object";
+					JSCompiler_temp_const.call(JSCompiler_inline_result, "The provided key is an unsupported type %s. This value must be coerced to a string before using it here.", JSCompiler_inline_result$jscomp$0);
+					return testStringCoercion(value);
+				}
+			}
+			function getComponentNameFromType(type) {
+				if (null == type) return null;
+				if ("function" === typeof type) return type.$$typeof === REACT_CLIENT_REFERENCE ? null : type.displayName || type.name || null;
+				if ("string" === typeof type) return type;
+				switch (type) {
+					case REACT_FRAGMENT_TYPE: return "Fragment";
+					case REACT_PROFILER_TYPE: return "Profiler";
+					case REACT_STRICT_MODE_TYPE: return "StrictMode";
+					case REACT_SUSPENSE_TYPE: return "Suspense";
+					case REACT_SUSPENSE_LIST_TYPE: return "SuspenseList";
+					case REACT_ACTIVITY_TYPE: return "Activity";
+				}
+				if ("object" === typeof type) switch ("number" === typeof type.tag && console.error("Received an unexpected object in getComponentNameFromType(). This is likely a bug in React. Please file an issue."), type.$$typeof) {
+					case REACT_PORTAL_TYPE: return "Portal";
+					case REACT_CONTEXT_TYPE: return type.displayName || "Context";
+					case REACT_CONSUMER_TYPE: return (type._context.displayName || "Context") + ".Consumer";
+					case REACT_FORWARD_REF_TYPE:
+						var innerType = type.render;
+						type = type.displayName;
+						type || (type = innerType.displayName || innerType.name || "", type = "" !== type ? "ForwardRef(" + type + ")" : "ForwardRef");
+						return type;
+					case REACT_MEMO_TYPE: return innerType = type.displayName || null, null !== innerType ? innerType : getComponentNameFromType(type.type) || "Memo";
+					case REACT_LAZY_TYPE:
+						innerType = type._payload;
+						type = type._init;
+						try {
+							return getComponentNameFromType(type(innerType));
+						} catch (x) {}
+				}
+				return null;
+			}
+			function getTaskName(type) {
+				if (type === REACT_FRAGMENT_TYPE) return "<>";
+				if ("object" === typeof type && null !== type && type.$$typeof === REACT_LAZY_TYPE) return "<...>";
+				try {
+					var name = getComponentNameFromType(type);
+					return name ? "<" + name + ">" : "<...>";
+				} catch (x) {
+					return "<...>";
+				}
+			}
+			function getOwner() {
+				var dispatcher = ReactSharedInternals.A;
+				return null === dispatcher ? null : dispatcher.getOwner();
+			}
+			function UnknownOwner() {
+				return Error("react-stack-top-frame");
+			}
+			function hasValidKey(config) {
+				if (hasOwnProperty.call(config, "key")) {
+					var getter = Object.getOwnPropertyDescriptor(config, "key").get;
+					if (getter && getter.isReactWarning) return !1;
+				}
+				return void 0 !== config.key;
+			}
+			function defineKeyPropWarningGetter(props, displayName) {
+				function warnAboutAccessingKey() {
+					specialPropKeyWarningShown || (specialPropKeyWarningShown = !0, console.error("%s: `key` is not a prop. Trying to access it will result in `undefined` being returned. If you need to access the same value within the child component, you should pass it as a different prop. (https://react.dev/link/special-props)", displayName));
+				}
+				warnAboutAccessingKey.isReactWarning = !0;
+				Object.defineProperty(props, "key", {
+					get: warnAboutAccessingKey,
+					configurable: !0
+				});
+			}
+			function elementRefGetterWithDeprecationWarning() {
+				var componentName = getComponentNameFromType(this.type);
+				didWarnAboutElementRef[componentName] || (didWarnAboutElementRef[componentName] = !0, console.error("Accessing element.ref was removed in React 19. ref is now a regular prop. It will be removed from the JSX Element type in a future release."));
+				componentName = this.props.ref;
+				return void 0 !== componentName ? componentName : null;
+			}
+			function ReactElement(type, key, props, owner, debugStack, debugTask) {
+				var refProp = props.ref;
+				type = {
+					$$typeof: REACT_ELEMENT_TYPE,
+					type,
+					key,
+					props,
+					_owner: owner
+				};
+				null !== (void 0 !== refProp ? refProp : null) ? Object.defineProperty(type, "ref", {
+					enumerable: !1,
+					get: elementRefGetterWithDeprecationWarning
+				}) : Object.defineProperty(type, "ref", {
+					enumerable: !1,
+					value: null
+				});
+				type._store = {};
+				Object.defineProperty(type._store, "validated", {
+					configurable: !1,
+					enumerable: !1,
+					writable: !0,
+					value: 0
+				});
+				Object.defineProperty(type, "_debugInfo", {
+					configurable: !1,
+					enumerable: !1,
+					writable: !0,
+					value: null
+				});
+				Object.defineProperty(type, "_debugStack", {
+					configurable: !1,
+					enumerable: !1,
+					writable: !0,
+					value: debugStack
+				});
+				Object.defineProperty(type, "_debugTask", {
+					configurable: !1,
+					enumerable: !1,
+					writable: !0,
+					value: debugTask
+				});
+				Object.freeze && (Object.freeze(type.props), Object.freeze(type));
+				return type;
+			}
+			function cloneAndReplaceKey(oldElement, newKey) {
+				newKey = ReactElement(oldElement.type, newKey, oldElement.props, oldElement._owner, oldElement._debugStack, oldElement._debugTask);
+				oldElement._store && (newKey._store.validated = oldElement._store.validated);
+				return newKey;
+			}
+			function validateChildKeys(node) {
+				isValidElement(node) ? node._store && (node._store.validated = 1) : "object" === typeof node && null !== node && node.$$typeof === REACT_LAZY_TYPE && ("fulfilled" === node._payload.status ? isValidElement(node._payload.value) && node._payload.value._store && (node._payload.value._store.validated = 1) : node._store && (node._store.validated = 1));
+			}
+			function isValidElement(object) {
+				return "object" === typeof object && null !== object && object.$$typeof === REACT_ELEMENT_TYPE;
+			}
+			function escape(key) {
+				var escaperLookup = {
+					"=": "=0",
+					":": "=2"
+				};
+				return "$" + key.replace(/[=:]/g, function(match) {
+					return escaperLookup[match];
+				});
+			}
+			function getElementKey(element, index) {
+				return "object" === typeof element && null !== element && null != element.key ? (checkKeyStringCoercion(element.key), escape("" + element.key)) : index.toString(36);
+			}
+			function resolveThenable(thenable) {
+				switch (thenable.status) {
+					case "fulfilled": return thenable.value;
+					case "rejected": throw thenable.reason;
+					default: switch ("string" === typeof thenable.status ? thenable.then(noop, noop) : (thenable.status = "pending", thenable.then(function(fulfilledValue) {
+						"pending" === thenable.status && (thenable.status = "fulfilled", thenable.value = fulfilledValue);
+					}, function(error) {
+						"pending" === thenable.status && (thenable.status = "rejected", thenable.reason = error);
+					})), thenable.status) {
+						case "fulfilled": return thenable.value;
+						case "rejected": throw thenable.reason;
+					}
+				}
+				throw thenable;
+			}
+			function mapIntoArray(children, array, escapedPrefix, nameSoFar, callback) {
+				var type = typeof children;
+				if ("undefined" === type || "boolean" === type) children = null;
+				var invokeCallback = !1;
+				if (null === children) invokeCallback = !0;
+				else switch (type) {
+					case "bigint":
+					case "string":
+					case "number":
+						invokeCallback = !0;
+						break;
+					case "object": switch (children.$$typeof) {
+						case REACT_ELEMENT_TYPE:
+						case REACT_PORTAL_TYPE:
+							invokeCallback = !0;
+							break;
+						case REACT_LAZY_TYPE: return invokeCallback = children._init, mapIntoArray(invokeCallback(children._payload), array, escapedPrefix, nameSoFar, callback);
+					}
+				}
+				if (invokeCallback) {
+					invokeCallback = children;
+					callback = callback(invokeCallback);
+					var childKey = "" === nameSoFar ? "." + getElementKey(invokeCallback, 0) : nameSoFar;
+					isArrayImpl(callback) ? (escapedPrefix = "", null != childKey && (escapedPrefix = childKey.replace(userProvidedKeyEscapeRegex, "$&/") + "/"), mapIntoArray(callback, array, escapedPrefix, "", function(c) {
+						return c;
+					})) : null != callback && (isValidElement(callback) && (null != callback.key && (invokeCallback && invokeCallback.key === callback.key || checkKeyStringCoercion(callback.key)), escapedPrefix = cloneAndReplaceKey(callback, escapedPrefix + (null == callback.key || invokeCallback && invokeCallback.key === callback.key ? "" : ("" + callback.key).replace(userProvidedKeyEscapeRegex, "$&/") + "/") + childKey), "" !== nameSoFar && null != invokeCallback && isValidElement(invokeCallback) && null == invokeCallback.key && invokeCallback._store && !invokeCallback._store.validated && (escapedPrefix._store.validated = 2), callback = escapedPrefix), array.push(callback));
+					return 1;
+				}
+				invokeCallback = 0;
+				childKey = "" === nameSoFar ? "." : nameSoFar + ":";
+				if (isArrayImpl(children)) for (var i = 0; i < children.length; i++) nameSoFar = children[i], type = childKey + getElementKey(nameSoFar, i), invokeCallback += mapIntoArray(nameSoFar, array, escapedPrefix, type, callback);
+				else if (i = getIteratorFn(children), "function" === typeof i) for (i === children.entries && (didWarnAboutMaps || console.warn("Using Maps as children is not supported. Use an array of keyed ReactElements instead."), didWarnAboutMaps = !0), children = i.call(children), i = 0; !(nameSoFar = children.next()).done;) nameSoFar = nameSoFar.value, type = childKey + getElementKey(nameSoFar, i++), invokeCallback += mapIntoArray(nameSoFar, array, escapedPrefix, type, callback);
+				else if ("object" === type) {
+					if ("function" === typeof children.then) return mapIntoArray(resolveThenable(children), array, escapedPrefix, nameSoFar, callback);
+					array = String(children);
+					throw Error("Objects are not valid as a React child (found: " + ("[object Object]" === array ? "object with keys {" + Object.keys(children).join(", ") + "}" : array) + "). If you meant to render a collection of children, use an array instead.");
+				}
+				return invokeCallback;
+			}
+			function mapChildren(children, func, context) {
+				if (null == children) return children;
+				var result = [], count = 0;
+				mapIntoArray(children, result, "", "", function(child) {
+					return func.call(context, child, count++);
+				});
+				return result;
+			}
+			function lazyInitializer(payload) {
+				if (-1 === payload._status) {
+					var ioInfo = payload._ioInfo;
+					null != ioInfo && (ioInfo.start = ioInfo.end = performance.now());
+					ioInfo = payload._result;
+					var thenable = ioInfo();
+					thenable.then(function(moduleObject) {
+						if (0 === payload._status || -1 === payload._status) {
+							payload._status = 1;
+							payload._result = moduleObject;
+							var _ioInfo = payload._ioInfo;
+							null != _ioInfo && (_ioInfo.end = performance.now());
+							void 0 === thenable.status && (thenable.status = "fulfilled", thenable.value = moduleObject);
+						}
+					}, function(error) {
+						if (0 === payload._status || -1 === payload._status) {
+							payload._status = 2;
+							payload._result = error;
+							var _ioInfo2 = payload._ioInfo;
+							null != _ioInfo2 && (_ioInfo2.end = performance.now());
+							void 0 === thenable.status && (thenable.status = "rejected", thenable.reason = error);
+						}
+					});
+					ioInfo = payload._ioInfo;
+					if (null != ioInfo) {
+						ioInfo.value = thenable;
+						var displayName = thenable.displayName;
+						"string" === typeof displayName && (ioInfo.name = displayName);
+					}
+					-1 === payload._status && (payload._status = 0, payload._result = thenable);
+				}
+				if (1 === payload._status) return ioInfo = payload._result, void 0 === ioInfo && console.error("lazy: Expected the result of a dynamic import() call. Instead received: %s\n\nYour code should look like: \n  const MyComponent = lazy(() => import('./MyComponent'))\n\nDid you accidentally put curly braces around the import?", ioInfo), "default" in ioInfo || console.error("lazy: Expected the result of a dynamic import() call. Instead received: %s\n\nYour code should look like: \n  const MyComponent = lazy(() => import('./MyComponent'))", ioInfo), ioInfo.default;
+				throw payload._result;
+			}
+			function resolveDispatcher() {
+				var dispatcher = ReactSharedInternals.H;
+				null === dispatcher && console.error("Invalid hook call. Hooks can only be called inside of the body of a function component. This could happen for one of the following reasons:\n1. You might have mismatching versions of React and the renderer (such as React DOM)\n2. You might be breaking the Rules of Hooks\n3. You might have more than one copy of React in the same app\nSee https://react.dev/link/invalid-hook-call for tips about how to debug and fix this problem.");
+				return dispatcher;
+			}
+			function releaseAsyncTransition() {
+				ReactSharedInternals.asyncTransitions--;
+			}
+			function enqueueTask(task) {
+				if (null === enqueueTaskImpl) try {
+					var requireString = ("require" + Math.random()).slice(0, 7);
+					enqueueTaskImpl = (module && module[requireString]).call(module, "timers").setImmediate;
+				} catch (_err) {
+					enqueueTaskImpl = function(callback) {
+						!1 === didWarnAboutMessageChannel && (didWarnAboutMessageChannel = !0, "undefined" === typeof MessageChannel && console.error("This browser does not have a MessageChannel implementation, so enqueuing tasks via await act(async () => ...) will fail. Please file an issue at https://github.com/facebook/react/issues if you encounter this warning."));
+						var channel = new MessageChannel();
+						channel.port1.onmessage = callback;
+						channel.port2.postMessage(void 0);
+					};
+				}
+				return enqueueTaskImpl(task);
+			}
+			function aggregateErrors(errors) {
+				return 1 < errors.length && "function" === typeof AggregateError ? new AggregateError(errors) : errors[0];
+			}
+			function popActScope(prevActQueue, prevActScopeDepth) {
+				prevActScopeDepth !== actScopeDepth - 1 && console.error("You seem to have overlapping act() calls, this is not supported. Be sure to await previous act() calls before making a new one. ");
+				actScopeDepth = prevActScopeDepth;
+			}
+			function recursivelyFlushAsyncActWork(returnValue, resolve, reject) {
+				var queue = ReactSharedInternals.actQueue;
+				if (null !== queue) if (0 !== queue.length) try {
+					flushActQueue(queue);
+					enqueueTask(function() {
+						return recursivelyFlushAsyncActWork(returnValue, resolve, reject);
+					});
+					return;
+				} catch (error) {
+					ReactSharedInternals.thrownErrors.push(error);
+				}
+				else ReactSharedInternals.actQueue = null;
+				0 < ReactSharedInternals.thrownErrors.length ? (queue = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, reject(queue)) : resolve(returnValue);
+			}
+			function flushActQueue(queue) {
+				if (!isFlushing) {
+					isFlushing = !0;
+					var i = 0;
+					try {
+						for (; i < queue.length; i++) {
+							var callback = queue[i];
+							do {
+								ReactSharedInternals.didUsePromise = !1;
+								var continuation = callback(!1);
+								if (null !== continuation) {
+									if (ReactSharedInternals.didUsePromise) {
+										queue[i] = callback;
+										queue.splice(0, i);
+										return;
+									}
+									callback = continuation;
+								} else break;
+							} while (1);
+						}
+						queue.length = 0;
+					} catch (error) {
+						queue.splice(0, i + 1), ReactSharedInternals.thrownErrors.push(error);
+					} finally {
+						isFlushing = !1;
+					}
+				}
+			}
+			"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(Error());
+			var REACT_ELEMENT_TYPE = Symbol.for("react.transitional.element"), REACT_PORTAL_TYPE = Symbol.for("react.portal"), REACT_FRAGMENT_TYPE = Symbol.for("react.fragment"), REACT_STRICT_MODE_TYPE = Symbol.for("react.strict_mode"), REACT_PROFILER_TYPE = Symbol.for("react.profiler"), REACT_CONSUMER_TYPE = Symbol.for("react.consumer"), REACT_CONTEXT_TYPE = Symbol.for("react.context"), REACT_FORWARD_REF_TYPE = Symbol.for("react.forward_ref"), REACT_SUSPENSE_TYPE = Symbol.for("react.suspense"), REACT_SUSPENSE_LIST_TYPE = Symbol.for("react.suspense_list"), REACT_MEMO_TYPE = Symbol.for("react.memo"), REACT_LAZY_TYPE = Symbol.for("react.lazy"), REACT_ACTIVITY_TYPE = Symbol.for("react.activity"), MAYBE_ITERATOR_SYMBOL = Symbol.iterator, didWarnStateUpdateForUnmountedComponent = {}, ReactNoopUpdateQueue = {
+				isMounted: function() {
+					return !1;
+				},
+				enqueueForceUpdate: function(publicInstance) {
+					warnNoop(publicInstance, "forceUpdate");
+				},
+				enqueueReplaceState: function(publicInstance) {
+					warnNoop(publicInstance, "replaceState");
+				},
+				enqueueSetState: function(publicInstance) {
+					warnNoop(publicInstance, "setState");
+				}
+			}, assign = Object.assign, emptyObject = {};
+			Object.freeze(emptyObject);
+			Component.prototype.isReactComponent = {};
+			Component.prototype.setState = function(partialState, callback) {
+				if ("object" !== typeof partialState && "function" !== typeof partialState && null != partialState) throw Error("takes an object of state variables to update or a function which returns an object of state variables.");
+				this.updater.enqueueSetState(this, partialState, callback, "setState");
+			};
+			Component.prototype.forceUpdate = function(callback) {
+				this.updater.enqueueForceUpdate(this, callback, "forceUpdate");
+			};
+			var deprecatedAPIs = {
+				isMounted: ["isMounted", "Instead, make sure to clean up subscriptions and pending requests in componentWillUnmount to prevent memory leaks."],
+				replaceState: ["replaceState", "Refactor your code to use setState instead (see https://github.com/facebook/react/issues/3236)."]
+			};
+			for (fnName in deprecatedAPIs) deprecatedAPIs.hasOwnProperty(fnName) && defineDeprecationWarning(fnName, deprecatedAPIs[fnName]);
+			ComponentDummy.prototype = Component.prototype;
+			deprecatedAPIs = PureComponent.prototype = new ComponentDummy();
+			deprecatedAPIs.constructor = PureComponent;
+			assign(deprecatedAPIs, Component.prototype);
+			deprecatedAPIs.isPureReactComponent = !0;
+			var isArrayImpl = Array.isArray, REACT_CLIENT_REFERENCE = Symbol.for("react.client.reference"), ReactSharedInternals = {
+				H: null,
+				A: null,
+				T: null,
+				S: null,
+				actQueue: null,
+				asyncTransitions: 0,
+				isBatchingLegacy: !1,
+				didScheduleLegacyUpdate: !1,
+				didUsePromise: !1,
+				thrownErrors: [],
+				getCurrentStack: null,
+				recentlyCreatedOwnerStacks: 0
+			}, hasOwnProperty = Object.prototype.hasOwnProperty, createTask = console.createTask ? console.createTask : function() {
+				return null;
+			};
+			deprecatedAPIs = { react_stack_bottom_frame: function(callStackForError) {
+				return callStackForError();
+			} };
+			var specialPropKeyWarningShown, didWarnAboutOldJSXRuntime;
+			var didWarnAboutElementRef = {};
+			var unknownOwnerDebugStack = deprecatedAPIs.react_stack_bottom_frame.bind(deprecatedAPIs, UnknownOwner)();
+			var unknownOwnerDebugTask = createTask(getTaskName(UnknownOwner));
+			var didWarnAboutMaps = !1, userProvidedKeyEscapeRegex = /\/+/g, reportGlobalError = "function" === typeof reportError ? reportError : function(error) {
+				if ("object" === typeof window && "function" === typeof window.ErrorEvent) {
+					var event = new window.ErrorEvent("error", {
+						bubbles: !0,
+						cancelable: !0,
+						message: "object" === typeof error && null !== error && "string" === typeof error.message ? String(error.message) : String(error),
+						error
+					});
+					if (!window.dispatchEvent(event)) return;
+				} else if ("object" === typeof process && "function" === typeof process.emit) {
+					process.emit("uncaughtException", error);
+					return;
+				}
+				console.error(error);
+			}, didWarnAboutMessageChannel = !1, enqueueTaskImpl = null, actScopeDepth = 0, didWarnNoAwaitAct = !1, isFlushing = !1, queueSeveralMicrotasks = "function" === typeof queueMicrotask ? function(callback) {
+				queueMicrotask(function() {
+					return queueMicrotask(callback);
+				});
+			} : enqueueTask;
+			deprecatedAPIs = Object.freeze({
+				__proto__: null,
+				c: function(size) {
+					return resolveDispatcher().useMemoCache(size);
+				}
+			});
+			var fnName = {
+				map: mapChildren,
+				forEach: function(children, forEachFunc, forEachContext) {
+					mapChildren(children, function() {
+						forEachFunc.apply(this, arguments);
+					}, forEachContext);
+				},
+				count: function(children) {
+					var n = 0;
+					mapChildren(children, function() {
+						n++;
+					});
+					return n;
+				},
+				toArray: function(children) {
+					return mapChildren(children, function(child) {
+						return child;
+					}) || [];
+				},
+				only: function(children) {
+					if (!isValidElement(children)) throw Error("React.Children.only expected to receive a single React element child.");
+					return children;
+				}
+			};
+			exports.Activity = REACT_ACTIVITY_TYPE;
+			exports.Children = fnName;
+			exports.Component = Component;
+			exports.Fragment = REACT_FRAGMENT_TYPE;
+			exports.Profiler = REACT_PROFILER_TYPE;
+			exports.PureComponent = PureComponent;
+			exports.StrictMode = REACT_STRICT_MODE_TYPE;
+			exports.Suspense = REACT_SUSPENSE_TYPE;
+			exports.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = ReactSharedInternals;
+			exports.__COMPILER_RUNTIME = deprecatedAPIs;
+			exports.act = function(callback) {
+				var prevActQueue = ReactSharedInternals.actQueue, prevActScopeDepth = actScopeDepth;
+				actScopeDepth++;
+				var queue = ReactSharedInternals.actQueue = null !== prevActQueue ? prevActQueue : [], didAwaitActCall = !1;
+				try {
+					var result = callback();
+				} catch (error) {
+					ReactSharedInternals.thrownErrors.push(error);
+				}
+				if (0 < ReactSharedInternals.thrownErrors.length) throw popActScope(prevActQueue, prevActScopeDepth), callback = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, callback;
+				if (null !== result && "object" === typeof result && "function" === typeof result.then) {
+					var thenable = result;
+					queueSeveralMicrotasks(function() {
+						didAwaitActCall || didWarnNoAwaitAct || (didWarnNoAwaitAct = !0, console.error("You called act(async () => ...) without await. This could lead to unexpected testing behaviour, interleaving multiple act calls and mixing their scopes. You should - await act(async () => ...);"));
+					});
+					return { then: function(resolve, reject) {
+						didAwaitActCall = !0;
+						thenable.then(function(returnValue) {
+							popActScope(prevActQueue, prevActScopeDepth);
+							if (0 === prevActScopeDepth) {
+								try {
+									flushActQueue(queue), enqueueTask(function() {
+										return recursivelyFlushAsyncActWork(returnValue, resolve, reject);
+									});
+								} catch (error$0) {
+									ReactSharedInternals.thrownErrors.push(error$0);
+								}
+								if (0 < ReactSharedInternals.thrownErrors.length) {
+									var _thrownError = aggregateErrors(ReactSharedInternals.thrownErrors);
+									ReactSharedInternals.thrownErrors.length = 0;
+									reject(_thrownError);
+								}
+							} else resolve(returnValue);
+						}, function(error) {
+							popActScope(prevActQueue, prevActScopeDepth);
+							0 < ReactSharedInternals.thrownErrors.length ? (error = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, reject(error)) : reject(error);
+						});
+					} };
+				}
+				var returnValue$jscomp$0 = result;
+				popActScope(prevActQueue, prevActScopeDepth);
+				0 === prevActScopeDepth && (flushActQueue(queue), 0 !== queue.length && queueSeveralMicrotasks(function() {
+					didAwaitActCall || didWarnNoAwaitAct || (didWarnNoAwaitAct = !0, console.error("A component suspended inside an `act` scope, but the `act` call was not awaited. When testing React components that depend on asynchronous data, you must await the result:\n\nawait act(() => ...)"));
+				}), ReactSharedInternals.actQueue = null);
+				if (0 < ReactSharedInternals.thrownErrors.length) throw callback = aggregateErrors(ReactSharedInternals.thrownErrors), ReactSharedInternals.thrownErrors.length = 0, callback;
+				return { then: function(resolve, reject) {
+					didAwaitActCall = !0;
+					0 === prevActScopeDepth ? (ReactSharedInternals.actQueue = queue, enqueueTask(function() {
+						return recursivelyFlushAsyncActWork(returnValue$jscomp$0, resolve, reject);
+					})) : resolve(returnValue$jscomp$0);
+				} };
+			};
+			exports.cache = function(fn) {
+				return function() {
+					return fn.apply(null, arguments);
+				};
+			};
+			exports.cacheSignal = function() {
+				return null;
+			};
+			exports.captureOwnerStack = function() {
+				var getCurrentStack = ReactSharedInternals.getCurrentStack;
+				return null === getCurrentStack ? null : getCurrentStack();
+			};
+			exports.cloneElement = function(element, config, children) {
+				if (null === element || void 0 === element) throw Error("The argument must be a React element, but you passed " + element + ".");
+				var props = assign({}, element.props), key = element.key, owner = element._owner;
+				if (null != config) {
+					var JSCompiler_inline_result;
+					a: {
+						if (hasOwnProperty.call(config, "ref") && (JSCompiler_inline_result = Object.getOwnPropertyDescriptor(config, "ref").get) && JSCompiler_inline_result.isReactWarning) {
+							JSCompiler_inline_result = !1;
+							break a;
+						}
+						JSCompiler_inline_result = void 0 !== config.ref;
+					}
+					JSCompiler_inline_result && (owner = getOwner());
+					hasValidKey(config) && (checkKeyStringCoercion(config.key), key = "" + config.key);
+					for (propName in config) !hasOwnProperty.call(config, propName) || "key" === propName || "__self" === propName || "__source" === propName || "ref" === propName && void 0 === config.ref || (props[propName] = config[propName]);
+				}
+				var propName = arguments.length - 2;
+				if (1 === propName) props.children = children;
+				else if (1 < propName) {
+					JSCompiler_inline_result = Array(propName);
+					for (var i = 0; i < propName; i++) JSCompiler_inline_result[i] = arguments[i + 2];
+					props.children = JSCompiler_inline_result;
+				}
+				props = ReactElement(element.type, key, props, owner, element._debugStack, element._debugTask);
+				for (key = 2; key < arguments.length; key++) validateChildKeys(arguments[key]);
+				return props;
+			};
+			exports.createContext = function(defaultValue) {
+				defaultValue = {
+					$$typeof: REACT_CONTEXT_TYPE,
+					_currentValue: defaultValue,
+					_currentValue2: defaultValue,
+					_threadCount: 0,
+					Provider: null,
+					Consumer: null
+				};
+				defaultValue.Provider = defaultValue;
+				defaultValue.Consumer = {
+					$$typeof: REACT_CONSUMER_TYPE,
+					_context: defaultValue
+				};
+				defaultValue._currentRenderer = null;
+				defaultValue._currentRenderer2 = null;
+				return defaultValue;
+			};
+			exports.createElement = function(type, config, children) {
+				for (var i = 2; i < arguments.length; i++) validateChildKeys(arguments[i]);
+				i = {};
+				var key = null;
+				if (null != config) for (propName in didWarnAboutOldJSXRuntime || !("__self" in config) || "key" in config || (didWarnAboutOldJSXRuntime = !0, console.warn("Your app (or one of its dependencies) is using an outdated JSX transform. Update to the modern JSX transform for faster performance: https://react.dev/link/new-jsx-transform")), hasValidKey(config) && (checkKeyStringCoercion(config.key), key = "" + config.key), config) hasOwnProperty.call(config, propName) && "key" !== propName && "__self" !== propName && "__source" !== propName && (i[propName] = config[propName]);
+				var childrenLength = arguments.length - 2;
+				if (1 === childrenLength) i.children = children;
+				else if (1 < childrenLength) {
+					for (var childArray = Array(childrenLength), _i = 0; _i < childrenLength; _i++) childArray[_i] = arguments[_i + 2];
+					Object.freeze && Object.freeze(childArray);
+					i.children = childArray;
+				}
+				if (type && type.defaultProps) for (propName in childrenLength = type.defaultProps, childrenLength) void 0 === i[propName] && (i[propName] = childrenLength[propName]);
+				key && defineKeyPropWarningGetter(i, "function" === typeof type ? type.displayName || type.name || "Unknown" : type);
+				var propName = 1e4 > ReactSharedInternals.recentlyCreatedOwnerStacks++;
+				return ReactElement(type, key, i, getOwner(), propName ? Error("react-stack-top-frame") : unknownOwnerDebugStack, propName ? createTask(getTaskName(type)) : unknownOwnerDebugTask);
+			};
+			exports.createRef = function() {
+				var refObject = { current: null };
+				Object.seal(refObject);
+				return refObject;
+			};
+			exports.forwardRef = function(render) {
+				null != render && render.$$typeof === REACT_MEMO_TYPE ? console.error("forwardRef requires a render function but received a `memo` component. Instead of forwardRef(memo(...)), use memo(forwardRef(...)).") : "function" !== typeof render ? console.error("forwardRef requires a render function but was given %s.", null === render ? "null" : typeof render) : 0 !== render.length && 2 !== render.length && console.error("forwardRef render functions accept exactly two parameters: props and ref. %s", 1 === render.length ? "Did you forget to use the ref parameter?" : "Any additional parameter will be undefined.");
+				null != render && null != render.defaultProps && console.error("forwardRef render functions do not support defaultProps. Did you accidentally pass a React component?");
+				var elementType = {
+					$$typeof: REACT_FORWARD_REF_TYPE,
+					render
+				}, ownName;
+				Object.defineProperty(elementType, "displayName", {
+					enumerable: !1,
+					configurable: !0,
+					get: function() {
+						return ownName;
+					},
+					set: function(name) {
+						ownName = name;
+						render.name || render.displayName || (Object.defineProperty(render, "name", { value: name }), render.displayName = name);
+					}
+				});
+				return elementType;
+			};
+			exports.isValidElement = isValidElement;
+			exports.lazy = function(ctor) {
+				ctor = {
+					_status: -1,
+					_result: ctor
+				};
+				var lazyType = {
+					$$typeof: REACT_LAZY_TYPE,
+					_payload: ctor,
+					_init: lazyInitializer
+				}, ioInfo = {
+					name: "lazy",
+					start: -1,
+					end: -1,
+					value: null,
+					owner: null,
+					debugStack: Error("react-stack-top-frame"),
+					debugTask: console.createTask ? console.createTask("lazy()") : null
+				};
+				ctor._ioInfo = ioInfo;
+				lazyType._debugInfo = [{ awaited: ioInfo }];
+				return lazyType;
+			};
+			exports.memo = function(type, compare) {
+				type ?? console.error("memo: The first argument must be a component. Instead received: %s", null === type ? "null" : typeof type);
+				compare = {
+					$$typeof: REACT_MEMO_TYPE,
+					type,
+					compare: void 0 === compare ? null : compare
+				};
+				var ownName;
+				Object.defineProperty(compare, "displayName", {
+					enumerable: !1,
+					configurable: !0,
+					get: function() {
+						return ownName;
+					},
+					set: function(name) {
+						ownName = name;
+						type.name || type.displayName || (Object.defineProperty(type, "name", { value: name }), type.displayName = name);
+					}
+				});
+				return compare;
+			};
+			exports.startTransition = function(scope) {
+				var prevTransition = ReactSharedInternals.T, currentTransition = {};
+				currentTransition._updatedFibers = /* @__PURE__ */ new Set();
+				ReactSharedInternals.T = currentTransition;
+				try {
+					var returnValue = scope(), onStartTransitionFinish = ReactSharedInternals.S;
+					null !== onStartTransitionFinish && onStartTransitionFinish(currentTransition, returnValue);
+					"object" === typeof returnValue && null !== returnValue && "function" === typeof returnValue.then && (ReactSharedInternals.asyncTransitions++, returnValue.then(releaseAsyncTransition, releaseAsyncTransition), returnValue.then(noop, reportGlobalError));
+				} catch (error) {
+					reportGlobalError(error);
+				} finally {
+					null === prevTransition && currentTransition._updatedFibers && (scope = currentTransition._updatedFibers.size, currentTransition._updatedFibers.clear(), 10 < scope && console.warn("Detected a large number of updates inside startTransition. If this is due to a subscription please re-write it to use React provided hooks. Otherwise concurrent mode guarantees are off the table.")), null !== prevTransition && null !== currentTransition.types && (null !== prevTransition.types && prevTransition.types !== currentTransition.types && console.error("We expected inner Transitions to have transferred the outer types set and that you cannot add to the outer Transition while inside the inner.This is a bug in React."), prevTransition.types = currentTransition.types), ReactSharedInternals.T = prevTransition;
+				}
+			};
+			exports.unstable_useCacheRefresh = function() {
+				return resolveDispatcher().useCacheRefresh();
+			};
+			exports.use = function(usable) {
+				return resolveDispatcher().use(usable);
+			};
+			exports.useActionState = function(action, initialState, permalink) {
+				return resolveDispatcher().useActionState(action, initialState, permalink);
+			};
+			exports.useCallback = function(callback, deps) {
+				return resolveDispatcher().useCallback(callback, deps);
+			};
+			exports.useContext = function(Context) {
+				var dispatcher = resolveDispatcher();
+				Context.$$typeof === REACT_CONSUMER_TYPE && console.error("Calling useContext(Context.Consumer) is not supported and will cause bugs. Did you mean to call useContext(Context) instead?");
+				return dispatcher.useContext(Context);
+			};
+			exports.useDebugValue = function(value, formatterFn) {
+				return resolveDispatcher().useDebugValue(value, formatterFn);
+			};
+			exports.useDeferredValue = function(value, initialValue) {
+				return resolveDispatcher().useDeferredValue(value, initialValue);
+			};
+			exports.useEffect = function(create, deps) {
+				create ?? console.warn("React Hook useEffect requires an effect callback. Did you forget to pass a callback to the hook?");
+				return resolveDispatcher().useEffect(create, deps);
+			};
+			exports.useEffectEvent = function(callback) {
+				return resolveDispatcher().useEffectEvent(callback);
+			};
+			exports.useId = function() {
+				return resolveDispatcher().useId();
+			};
+			exports.useImperativeHandle = function(ref, create, deps) {
+				return resolveDispatcher().useImperativeHandle(ref, create, deps);
+			};
+			exports.useInsertionEffect = function(create, deps) {
+				create ?? console.warn("React Hook useInsertionEffect requires an effect callback. Did you forget to pass a callback to the hook?");
+				return resolveDispatcher().useInsertionEffect(create, deps);
+			};
+			exports.useLayoutEffect = function(create, deps) {
+				create ?? console.warn("React Hook useLayoutEffect requires an effect callback. Did you forget to pass a callback to the hook?");
+				return resolveDispatcher().useLayoutEffect(create, deps);
+			};
+			exports.useMemo = function(create, deps) {
+				return resolveDispatcher().useMemo(create, deps);
+			};
+			exports.useOptimistic = function(passthrough, reducer) {
+				return resolveDispatcher().useOptimistic(passthrough, reducer);
+			};
+			exports.useReducer = function(reducer, initialArg, init) {
+				return resolveDispatcher().useReducer(reducer, initialArg, init);
+			};
+			exports.useRef = function(initialValue) {
+				return resolveDispatcher().useRef(initialValue);
+			};
+			exports.useState = function(initialState) {
+				return resolveDispatcher().useState(initialState);
+			};
+			exports.useSyncExternalStore = function(subscribe, getSnapshot, getServerSnapshot) {
+				return resolveDispatcher().useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+			};
+			exports.useTransition = function() {
+				return resolveDispatcher().useTransition();
+			};
+			exports.version = "19.2.4";
+			"undefined" !== typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ && "function" === typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop && __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStop(Error());
+		})();
+	}));
+	(/* @__PURE__ */ __commonJSMin(((exports, module) => {
+		module.exports = require_react_development();
+	})))();
+	/** Map physical character → browser KeyboardEvent.code */
+	function charToCode$1(c) {
+		if (c.length !== 1) return null;
+		const upper = c.toUpperCase();
+		if (upper >= "A" && upper <= "Z") return `Key${upper}`;
+		switch (c) {
+			case ";": return "Semicolon";
+			case ",": return "Comma";
+			case ".": return "Period";
+			case "/": return "Slash";
+			case " ": return "Space";
+			case "-": return "Minus";
+			case "=": return "Equal";
+			case "[": return "BracketLeft";
+			case "]": return "BracketRight";
+			case "'": return "Quote";
+			case "`": return "Backquote";
+			case "\\": return "Backslash";
+			default:
+				if (c >= "0" && c <= "9") return `Digit${c}`;
+				return null;
+		}
+	}
+	/** ChordKey name → browser code for label placement */
+	const CHORD_KEY_TO_CODE = {
+		Q: "KeyQ",
+		W: "KeyW",
+		E: "KeyE",
+		R: "KeyR",
+		T: "KeyT",
+		Y: "KeyY",
+		U: "KeyU",
+		I: "KeyI",
+		O: "KeyO",
+		P: "KeyP",
+		A: "KeyA",
+		S: "KeyS",
+		D: "KeyD",
+		F: "KeyF",
+		G: "KeyG",
+		H: "KeyH",
+		J: "KeyJ",
+		K: "KeyK",
+		L: "KeyL",
+		semicolon: "Semicolon",
+		Z: "KeyZ",
+		X: "KeyX",
+		C: "KeyC",
+		V: "KeyV",
+		B: "KeyB",
+		N: "KeyN",
+		M: "KeyM",
+		comma: "Comma",
+		dot: "Period",
+		slash: "Slash",
+		space: "Space",
+		leftThumb: "_LeftThumb",
+		rightThumb: "_RightThumb"
+	};
+	//#endregion
+	//#region src/engine/layout-features-analyzer.ts
+	/** ChordKey name → display label */
+	const CHORD_KEY_LABEL = {
+		Q: "Q",
+		W: "W",
+		E: "E",
+		R: "R",
+		T: "T",
+		Y: "Y",
+		U: "U",
+		I: "I",
+		O: "O",
+		P: "P",
+		A: "A",
+		S: "S",
+		D: "D",
+		F: "F",
+		G: "G",
+		H: "H",
+		J: "J",
+		K: "K",
+		L: "L",
+		semicolon: ";",
+		Z: "Z",
+		X: "X",
+		C: "C",
+		V: "V",
+		B: "B",
+		N: "N",
+		M: "M",
+		comma: ",",
+		dot: ".",
+		slash: "/",
+		space: "Space",
+		leftThumb: "L親指",
+		rightThumb: "R親指",
+		holder1: "シフト",
+		holder2: "シフト2",
+		holder3: "シフト3"
+	};
+	/** Bitmask → ChordKey name array */
+	function bitmaskToKeys(bitmask) {
+		const keys = [];
+		for (const [name, idx] of Object.entries(CHORD_KEY_BIT_INDEX)) if (bitmask & 2 ** idx) keys.push(name);
+		return keys;
+	}
+	/** ChordKey names → browser codes for highlighting */
+	function chordKeysToCodes(keys) {
+		return keys.map((k) => CHORD_KEY_TO_CODE[k]).filter((c) => c !== void 0);
+	}
+	/** Character → browser code with inverse remap */
+	function charToBrowserCode(c, inverseRemap) {
+		return charToCode$1(inverseRemap.get(c) ?? c);
+	}
+	function popcountSafe(n) {
+		let count = 0;
+		for (const [, idx] of Object.entries(CHORD_KEY_BIT_INDEX)) if (n & 2 ** idx) count++;
+		return count;
+	}
+	/** Analyze a keymap definition and return feature sections */
+	function analyzeKeymap(keymap) {
+		const def = keymap.definition;
+		if (def.behavior.type === "chord") return analyzeChord(def.behavior.config, keymap);
+		return analyzeSequential(keymap);
+	}
+	function analyzeChord(config, keymap) {
+		const chord = keymap.chordData;
+		const result = [];
+		const shiftRoleNames = [...chord.shiftKeys];
+		if (shiftRoleNames.length > 0) {
+			const roles = keymap.definition.roles ?? {};
+			const labelOf = (name) => roles[name]?.label ?? CHORD_KEY_LABEL[name] ?? name;
+			const items = [];
+			items.push({
+				type: "feature",
+				inputLabel: shiftRoleNames.map(labelOf).join(" / "),
+				output: "シフトキー（同時押し）",
+				highlightKeys: chordKeysToCodes(shiftRoleNames)
+			});
+			for (const name of shiftRoleNames) {
+				const keys = roles[name]?.keys;
+				if (keys && keys.length > 0) items.push({
+					type: "feature",
+					inputLabel: labelOf(name),
+					output: `物理キー候補: ${keys.join(" / ")}`,
+					highlightKeys: []
+				});
+				const parsed = chord.shiftSingleTapActions.get(name);
+				const raw = config.shiftKeys.find((sk) => sk.key === name)?.singleTapAction;
+				const singleTap = parsed ? actionToString(parsed) : raw;
+				if (singleTap) {
+					const label = actionShortLabel(singleTap);
+					if (label) items.push({
+						type: "feature",
+						inputLabel: `${labelOf(name)} 単打`,
+						output: label,
+						highlightKeys: chordKeysToCodes([name])
+					});
+				}
+			}
+			result.push({
+				title: "シフト操作",
+				items
+			});
+		}
+		const punctuation = [];
+		for (const [keyStr, actionStr] of Object.entries(config.specialActions).sort(([a], [b]) => a.localeCompare(b))) if (actionStr.startsWith("insertAndConfirm:")) {
+			const text = actionStr.slice(17);
+			const keys = keyStr.split("+");
+			punctuation.push({
+				type: "feature",
+				inputLabel: keys.map((k) => CHORD_KEY_LABEL[k] ?? k).join("+"),
+				output: text,
+				highlightKeys: chordKeysToCodes(keys)
+			});
+		}
+		if (punctuation.length > 0) result.push({
+			title: "句読点・記号",
+			items: punctuation
+		});
+		const modeSwitch = [];
+		const modeSources = [[config.specialActions, ""], [config.englishSpecialActions ?? {}, "（英数モード中）"]];
+		for (const [table, suffix] of modeSources) for (const [keyStr, actionStr] of Object.entries(table).sort(([a], [b]) => a.localeCompare(b))) if (actionStr === "switchToEnglish" || actionStr === "switchToJapanese") {
+			const keys = keyStr.split("+");
+			modeSwitch.push({
+				type: "feature",
+				inputLabel: `${keys.map((k) => CHORD_KEY_LABEL[k] ?? k).join("+")}${suffix}`,
+				output: actionStr === "switchToEnglish" ? "英数モードへ" : "かなモードへ",
+				highlightKeys: chordKeysToCodes(keys)
+			});
+		}
+		if (modeSwitch.length > 0) result.push({
+			title: "モード切替",
+			items: modeSwitch
+		});
+		const editing = [];
+		for (const [keyStr, actionStr] of Object.entries(config.specialActions).sort(([a], [b]) => a.localeCompare(b))) {
+			if (actionStr.startsWith("insertAndConfirm:")) continue;
+			if (actionStr === "switchToEnglish" || actionStr === "switchToJapanese") continue;
+			const keys = keyStr.split("+");
+			editing.push({
+				type: "feature",
+				inputLabel: keys.map((k) => CHORD_KEY_LABEL[k] ?? k).join("+"),
+				output: actionShortLabel(actionStr) ?? actionStr,
+				highlightKeys: chordKeysToCodes(keys)
+			});
+		}
+		if (editing.length > 0) result.push({
+			title: "編集・カーソル操作",
+			items: editing
+		});
+		const multiKey = [];
+		for (const [bitmask, output] of chord.lookupTable) if (popcountSafe(bitmask) >= 3) {
+			const keys = bitmaskToKeys(bitmask);
+			multiKey.push({
+				inputLabel: keys.map((k) => CHORD_KEY_LABEL[k] ?? k).join("+"),
+				output,
+				highlightKeys: chordKeysToCodes(keys)
+			});
+		}
+		if (multiKey.length > 0) {
+			multiKey.sort((a, b) => a.output.localeCompare(b.output));
+			result.push({
+				title: `多キー同時押し（${multiKey.length}種）`,
+				items: multiKey.map((m) => ({
+					type: "feature",
+					...m
+				}))
+			});
+		}
+		return result;
+	}
+	function analyzeSequential(keymap) {
+		const def = keymap.definition;
+		const mappings = keymap.inputMappings;
+		const result = [];
+		const inverseRemap = /* @__PURE__ */ new Map();
+		for (const [physical, logical] of Object.entries(keymap.keyRemap)) inverseRemap.set(logical, physical);
+		if (Object.keys(keymap.keyRemap).length > 0) {
+			const items = [];
+			for (const [physical, logical] of Object.entries(keymap.keyRemap).sort(([a], [b]) => a.localeCompare(b))) {
+				const code = charToCode$1(physical);
+				items.push({
+					type: "feature",
+					inputLabel: physical,
+					output: `→ ${logical}`,
+					highlightKeys: code ? [code] : []
+				});
+			}
+			result.push({
+				title: `キーリマップ（${items.length}キー）`,
+				items
+			});
+		}
+		if (def.inputBase === "romaji" && def.inputMappings) {
+			const customItems = [];
+			for (const [seq, output] of Object.entries(def.inputMappings).sort(([a], [b]) => a.localeCompare(b))) {
+				if (seq.startsWith("_comment")) continue;
+				if (standardRomajiTable[seq] === output) continue;
+				const codes = seq.split("").map((c) => charToBrowserCode(c, inverseRemap)).filter((c) => c !== null);
+				const label = standardRomajiTable[seq] ? `${output}（標準: ${standardRomajiTable[seq]}）` : output;
+				customItems.push({
+					type: "feature",
+					inputLabel: seq,
+					output: label,
+					highlightKeys: codes
+				});
+			}
+			if (customItems.length > 0) result.push({
+				title: `カスタム定義（${customItems.length}種）`,
+				items: customItems
+			});
+		}
+		if (def.suffixRules && Object.keys(def.suffixRules).length > 0) {
+			const vowelLabels = {
+				a: "あ段",
+				i: "い段",
+				u: "う段",
+				e: "え段",
+				o: "お段"
+			};
+			const hatsuon = Object.entries(def.suffixRules).filter(([, r]) => r.suffix === "ん").sort(([a], [b]) => a.localeCompare(b));
+			const chouin = Object.entries(def.suffixRules).filter(([, r]) => r.suffix !== "ん").sort(([a], [b]) => a.localeCompare(b));
+			const items = [];
+			if (hatsuon.length > 0) {
+				const desc = hatsuon.map(([key, rule]) => `${key}=${vowelLabels[rule.vowel] ?? rule.vowel}+ん`).join(", ");
+				const codes = hatsuon.map(([k]) => charToBrowserCode(k, inverseRemap)).filter((c) => c !== null);
+				items.push({
+					type: "feature",
+					inputLabel: "撥音",
+					output: desc,
+					highlightKeys: codes
+				});
+			}
+			if (chouin.length > 0) {
+				const desc = chouin.map(([key, rule]) => `${key}=${vowelLabels[rule.vowel] ?? rule.vowel}+${rule.suffix}`).join(", ");
+				const codes = chouin.map(([k]) => charToBrowserCode(k, inverseRemap)).filter((c) => c !== null);
+				items.push({
+					type: "feature",
+					inputLabel: "長音",
+					output: desc,
+					highlightKeys: codes
+				});
+			}
+			if (items.length > 0) result.push({
+				title: `サフィックス拡張（${Object.keys(def.suffixRules).length}種）`,
+				items
+			});
+		}
+		const suffixGeneratedKeys = /* @__PURE__ */ new Set();
+		if (def.suffixRules && Object.keys(def.suffixRules).length > 0) {
+			const vowels = /* @__PURE__ */ new Set([
+				"a",
+				"i",
+				"u",
+				"e",
+				"o"
+			]);
+			const allEntries = {
+				...standardRomajiTable,
+				...mappings
+			};
+			for (const seq of Object.keys(allEntries)) {
+				if (seq.length < 2) continue;
+				const last = seq[seq.length - 1];
+				if (!vowels.has(last)) continue;
+				const consonant = seq.slice(0, -1);
+				if (!consonant) continue;
+				for (const [suffixKey, rule] of Object.entries(def.suffixRules)) if (last === rule.vowel) suffixGeneratedKeys.add(consonant + suffixKey);
+			}
+		}
+		const standardKeys = def.inputBase === "romaji" ? new Set(Object.keys(standardRomajiTable)) : /* @__PURE__ */ new Set();
+		const wordShortcuts = [];
+		for (const [seq, output] of Object.entries(mappings).sort(([a], [b]) => a.localeCompare(b))) if (output.length >= 2 && isAllKana(output) && !suffixGeneratedKeys.has(seq) && !standardKeys.has(seq)) {
+			const codes = seq.split("").map((c) => charToBrowserCode(c, inverseRemap)).filter((c) => c !== null);
+			wordShortcuts.push({
+				type: "feature",
+				inputLabel: seq,
+				output,
+				highlightKeys: codes
+			});
+		}
+		if (wordShortcuts.length > 0) result.push({
+			title: `単語ショートカット（${wordShortcuts.length}種）`,
+			items: wordShortcuts
+		});
+		if (!def.suffixRules || Object.keys(def.suffixRules).length === 0) {
+			const prefixChildren = /* @__PURE__ */ new Map();
+			for (const [seq, output] of Object.entries(mappings)) if (seq.length >= 2 && seq[0]) {
+				if (!prefixChildren.has(seq[0])) prefixChildren.set(seq[0], []);
+				prefixChildren.get(seq[0]).push({
+					seq,
+					output
+				});
+			}
+			const significantPrefixes = [...prefixChildren.entries()].filter(([, children]) => children.length >= 5).sort(([a], [b]) => a.localeCompare(b));
+			if (significantPrefixes.length > 0) {
+				const items = [];
+				for (const [prefix, entries] of significantPrefixes) {
+					const prefixCode = charToBrowserCode(prefix, inverseRemap);
+					const children = entries.sort((a, b) => a.seq.localeCompare(b.seq)).map((entry) => ({
+						type: "feature",
+						inputLabel: entry.seq,
+						output: entry.output,
+						highlightKeys: entry.seq.split("").map((c) => charToBrowserCode(c, inverseRemap)).filter((c) => c !== null)
+					}));
+					items.push({
+						type: "group",
+						prefixLabel: `${prefix} 前置（${children.length}種）`,
+						prefixKey: prefixCode,
+						children
+					});
+				}
+				result.push({
+					title: "前置キー",
+					items
+				});
+			}
+		}
+		const symbols = [];
+		for (const [seq, output] of Object.entries(mappings).sort(([a], [b]) => a.localeCompare(b))) if (output.length <= 2 && !isAllKana(output) && seq.length >= 2) {
+			const codes = seq.split("").map((c) => charToBrowserCode(c, inverseRemap)).filter((c) => c !== null);
+			symbols.push({
+				type: "feature",
+				inputLabel: seq,
+				output,
+				highlightKeys: codes
+			});
+		}
+		if (symbols.length > 0) result.push({
+			title: "特殊記号",
+			items: symbols
+		});
+		return result;
+	}
+	function isAllKana(str) {
+		for (const ch of str) {
+			const code = ch.codePointAt(0);
+			if (code === void 0) return false;
+			if (!(code >= 12352 && code <= 12447 || code >= 12448 && code <= 12543)) return false;
+		}
+		return true;
+	}
+	/** 展開済み KeyAction を、actionShortLabel が食える文字列表現へ戻す */
+	function actionToString(a) {
+		switch (a.type) {
+			case "insertAndConfirm": return `insertAndConfirm:${a.text}`;
+			case "directInsert": return `directInsert:${a.text}`;
+			case "postModify": return `postModify:${a.op}`;
+			case "printable": return a.char;
+			default: return a.type;
+		}
+	}
+	function actionShortLabel(actionStr) {
+		switch (actionStr) {
+			case "convert": return "変換";
+			case "confirm": return "確定";
+			case "cancel": return "キャンセル";
+			case "deleteBack": return "削除";
+			case "moveLeft": return "←";
+			case "moveRight": return "→";
+			case "switchToEnglish": return "英数";
+			case "switchToJapanese": return "かな";
+			case "convertPrev": return "前候補";
+			case "moveUp": return "↑";
+			case "moveDown": return "↓";
+			case "editSegmentLeft": return "文節を縮める";
+			case "editSegmentRight": return "文節を伸ばす";
+			case "insertSpace": return "スペース";
+			case "toggleInputMode": return "かな / 英数を切替";
+			default:
+				if (actionStr.startsWith("insertAndConfirm:")) return actionStr.slice(17);
+				return actionStr;
+		}
+	}
+	//#endregion
+	//#region src/engine/keycap-labels.ts
+	/** 逆引き表を作るための候補 code 一覧（英数字・記号・親指キー） */
+	function browserCodeCandidates() {
+		const out = [];
+		for (const c of "ABCDEFGHIJKLMNOPQRSTUVWXYZ") out.push(`Key${c}`);
+		for (const d of "0123456789") out.push(`Digit${d}`);
+		out.push("Minus", "Equal", "BracketLeft", "BracketRight", "Backslash", "Semicolon", "Quote", "Backquote", "Comma", "Period", "Slash", "Space", "Enter", "Tab", "Backspace", "IntlYen", "IntlRo", "NonConvert", "Convert", "KanaMode", "Lang1", "Lang2");
+		return out;
+	}
+	/** HID コード → browser code（engine には名前版しか無いので数値版をここで作る） */
+	const HID_TO_BROWSER = /* @__PURE__ */ new Map();
+	for (const code of browserCodeCandidates()) {
+		const hid = browserCodeToHID(code);
+		if (hid !== void 0 && !HID_TO_BROWSER.has(hid)) HID_TO_BROWSER.set(hid, code);
+	}
+	/** 1 文字の論理キー → browser code。layout に応じて JIS の刻印位置を補正する */
+	function charToCode(ch, layout) {
+		if (ch.length !== 1) return void 0;
+		const upper = ch.toUpperCase();
+		if (upper >= "A" && upper <= "Z") return `Key${upper}`;
+		if (ch >= "0" && ch <= "9") return `Digit${ch}`;
+		const us = {
+			"-": "Minus",
+			"=": "Equal",
+			"[": "BracketLeft",
+			"]": "BracketRight",
+			"\\": "Backslash",
+			";": "Semicolon",
+			"'": "Quote",
+			"`": "Backquote",
+			",": "Comma",
+			".": "Period",
+			"/": "Slash",
+			" ": "Space"
+		};
+		if (layout === "jis") {
+			const jis = {
+				"@": "BracketLeft",
+				"[": "BracketRight",
+				":": "Quote",
+				"]": "Backslash",
+				"^": "Equal",
+				"¥": "IntlYen"
+			};
+			if (jis[ch]) return jis[ch];
+		}
+		return us[ch];
+	}
+	/**
+	* 機能アクション → キーキャップに出す短い表示。
+	*
+	* かなが載っていないキーに機能が割り当たっていることは珍しくない
+	* （薙刀式の T=← / Y=→ / U=⌫ など）。刻印が物理のままだと「そこは何もない」に見えるので、
+	* 機能も出す。語彙の正典は labo `docs/key-action-registry.json`。
+	* ここに無いアクションは出さない（物理刻印のまま = 読めない文字列を出すより良い）。
+	*/
+	const ACTION_CAPS = {
+		convert: "変換",
+		convertPrev: "前候補",
+		confirm: "確定",
+		cancel: "取消",
+		deleteBack: "⌫",
+		moveLeft: "←",
+		moveRight: "→",
+		moveUp: "↑",
+		moveDown: "↓",
+		editSegmentLeft: "文節←",
+		editSegmentRight: "文節→",
+		confirmHiragana: "かな",
+		confirmKatakana: "カナ",
+		confirmHalfWidthKatakana: "半カナ",
+		confirmFullWidthRoman: "全英",
+		confirmHalfWidthRoman: "半英",
+		switchToEnglish: "英数",
+		switchToJapanese: "日本語",
+		toggleInputMode: "英/日",
+		insertSpace: "空白",
+		undo: "取消",
+		moveSentenceStart: "行頭",
+		moveSentenceEnd: "行末"
+	};
+	/** アクション文字列（`"insertAndConfirm:、"` 等）→ キーキャップの表示。無ければ undefined */
+	function actionCap(raw) {
+		if (typeof raw !== "string") return void 0;
+		const [name, ...rest] = raw.split(":");
+		if ((name === "insertAndConfirm" || name === "directInsert") && rest.length > 0) return rest.join(":");
+		return ACTION_CAPS[name];
+	}
+	/**
+	* 配列の基本面のキーキャップ表示を作る。返り値は **browser の KeyboardEvent.code** →
+	* 表示文字列（keymap v2 の役名ではない —— キーボード図と打鍵記録が使う空間に合わせる）。
+	*
+	* - chord 配列（薙刀式・NICOLA 等）: `lookupTable` の**単打**エントリ
+	* - sequential 配列（月配列・AZIK 等）: `characterMap` と 1 文字の `inputMappings`
+	*
+	* ローマ字系はキー 1 個にかなが対応しないので、ほとんど何も返らない（＝ 図には
+	* 物理刻印がそのまま残る）。それが正しい —— ローマ字は組み合わせで決まる。
+	*/
+	function keyCapLabels(km, opts = {}) {
+		const out = /* @__PURE__ */ new Map();
+		const def = km.definition;
+		if (def.behavior.type === "chord" && km.chordData) {
+			const nameToCode = /* @__PURE__ */ new Map();
+			for (const [hid, name] of km.chordData.hidToChordKey) {
+				const code = HID_TO_BROWSER.get(hid);
+				if (code && !nameToCode.has(name)) nameToCode.set(name, code);
+			}
+			const config = def.behavior.config;
+			const codeOf = (keyStr) => nameToCode.get(keyStr) ?? hidNameToBrowserCode(keyStr) ?? charToCode(keyStr, opts.layout);
+			for (const [keyStr, output] of Object.entries(config.lookupTable ?? {})) {
+				if (keyStr.startsWith("_comment") || keyStr.includes("+")) continue;
+				const code = codeOf(keyStr);
+				if (code && typeof output === "string") out.set(code, output);
+			}
+			for (const [keyStr, action] of Object.entries(config.specialActions ?? {})) {
+				if (keyStr.startsWith("_comment") || keyStr.includes("+")) continue;
+				const code = codeOf(keyStr);
+				if (!code || out.has(code)) continue;
+				const cap = actionCap(action);
+				if (cap) out.set(code, cap);
+			}
+			return out;
+		}
+		const logicalToPhysical = /* @__PURE__ */ new Map();
+		for (const [physical, logical] of Object.entries(km.keyRemap)) logicalToPhysical.set(logical, physical);
+		const put = (logical, label) => {
+			const code = charToCode(logicalToPhysical.get(logical) ?? logical, opts.layout);
+			if (code) out.set(code, label);
+		};
+		for (const [ch, mapped] of Object.entries(km.characterMap)) put(ch, mapped);
+		for (const [seq, output] of Object.entries(def.inputMappings ?? {})) {
+			if (seq.startsWith("_comment") || seq.length !== 1) continue;
+			put(seq, output);
+		}
+		return out;
+	}
+	//#endregion
+	//#region src/engine/index.ts
+	/** このバンドルのバージョン（取り込み側が記録する用） */
+	const version = ENGINE_VERSION;
+	/** サポートする keymap-format のメジャーバージョン */
+	const SUPPORTED_MAJOR = 2;
+	/**
+	* keymap JSON を検証しつつ ExpandedKeymap に変換する。
+	* `InputEngine` のコンストラクタにそのまま渡せる形。
+	*
+	* - `formatVersion` のメジャーが非対応なら明確なエラーを投げる。
+	* - `behavior.type` が未対応（sequential / chord 以外）ならデコーダがエラーを投げる。
+	* - `judgment` が未知の値ならエラーを投げる（v1.10.0。旧版は黙って window に潰していた）。
+	* - `requires` に理解できないセマンティクス名があればエラーを投げる（v1.11.0）。
+	* - `opts.onDiagnostic` を渡すと、**解釈できずに捨てたエントリ**を報告する
+	*   （未知のキー名・その面では書けないアクション・壊れたパラメータ等）。
+	*   省略時は従来どおり黙って捨てる。
+	*/
+	function decodeKeymap(json, opts = {}) {
+		if (json === null || typeof json !== "object") throw new Error("KeymapEngine.decodeKeymap: keymap JSON オブジェクトを渡してください");
+		const obj = json;
+		assertFormatVersion(obj.formatVersion);
+		return expandKeymap(decodeKeymap$1(obj, opts), opts);
+	}
+	function assertFormatVersion(raw) {
+		const v = typeof raw === "string" && raw.length > 0 ? raw : "";
+		const major = Number.parseInt(v.split(".")[0], 10);
+		if (!Number.isFinite(major) || major !== SUPPORTED_MAJOR) throw new Error(`KeymapEngine: 非対応の formatVersion "${v}"（このエンジンは ${SUPPORTED_MAJOR}.x に対応）`);
+	}
+	/**
+	* DOM KeyboardEvent 風オブジェクトからエンジン内部の `KeyEvent` を組み立てる便宜関数。
+	* `KeyboardEvent.code` が変換テーブルに無い場合は `null`（呼び元は透過扱いにする）。
+	*
+	* 生の変換テーブルが必要なら `browserCodeToHID` / `hidNameToCode` を直接使う。
+	*/
+	function keyEventFromBrowser(e) {
+		const keyCode = browserCodeToHID(e.code);
+		if (keyCode === void 0) return null;
+		let modifiers = 0;
+		if (e.shiftKey) modifiers |= KeyModifierFlags.SHIFT;
+		if (e.ctrlKey) modifiers |= KeyModifierFlags.CONTROL;
+		if (e.altKey) modifiers |= KeyModifierFlags.ALT;
+		if (e.metaKey) modifiers |= KeyModifierFlags.META;
+		return {
+			keyCode,
+			characters: typeof e.key === "string" && e.key.length === 1 ? e.key : "",
+			modifiers
+		};
+	}
+	//#endregion
+	exports.InputEngine = InputEngine;
+	exports.KeyModifierFlags = KeyModifierFlags;
+	exports.SUPPORTED_SEMANTICS = SUPPORTED_SEMANTICS;
+	exports.analyzeKeymap = analyzeKeymap;
+	exports.browserCodeToHID = browserCodeToHID;
+	exports.collectDiagnostics = collectDiagnostics;
+	exports.createBuiltinRomajiJIS = createBuiltinRomajiJIS;
+	exports.createBuiltinRomajiUS = createBuiltinRomajiUS;
+	exports.decodeKeymap = decodeKeymap;
+	exports.decodeKeymapDefinition = decodeKeymap$1;
+	exports.expandKeymap = expandKeymap;
+	exports.hidCodeToName = hidCodeToName;
+	exports.hidNameToBrowserCode = hidNameToBrowserCode;
+	exports.hidNameToCode = hidNameToCode;
+	exports.isSatisfiedBy = isSatisfiedBy;
+	exports.keyCapLabels = keyCapLabels;
+	exports.keyEventFromBrowser = keyEventFromBrowser;
+	exports.requiredInputLevel = requiredInputLevel;
+	exports.version = version;
+});
