@@ -22,7 +22,7 @@ Open http://127.0.0.1:4173 in Chrome. Run the command from this directory on mac
 - The Japanese input button or Ctrl+Space switches both fields between Japanese and English. Use the button if the OS intercepts the shortcut.
 - Ctrl+Z / Ctrl+Y / Ctrl+Shift+Z: undo / redo. Command shortcuts also work on macOS.
 - Search emoji in Japanese, or switch to English input for keywords such as `cat`. Click an emoji to insert it at the last editor cursor position.
-- Copy text, Search Google, Clear all, and grapheme-based character counting are available.
+- Copy text, Search Google, and grapheme-based character counting are available. Use **Clear text** at the top right of the text box to erase its contents; **Undo** restores them.
 
 ## Privacy and offline access
 

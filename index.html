@@ -5,8 +5,8 @@
 <meta name="description" content="Type Japanese with an English keyboard. Private, on-device kanji conversion and emoji search, right in your browser.">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <title>Enoki — Japanese at your fingertips</title>
-<link rel="stylesheet" href="styles.css?v=enoki-2">
-<script src="vendor/keymap-engine/keymap-engine.js" defer></script><script src="vendor/hechima/hechima.js" defer></script><script src="app.js?v=enoki-2" type="module"></script>
+<link rel="stylesheet" href="styles.css?v=enoki-3">
+<script src="vendor/keymap-engine/keymap-engine.js" defer></script><script src="vendor/hechima/hechima.js" defer></script><script src="app.js?v=enoki-3" type="module"></script>
 </head>
 <body><div class="page">
 <header class="site-header"><a href="./" class="brand" aria-label="Enoki home"><span class="brand-symbol" aria-hidden="true">e</span><span class="brand-name">Enoki<small>JAPANESE INPUT</small></span></a><div class="header-right"><span class="local-badge"><i class="status-dot"></i>On-device conversion</span><button id="help-button" type="button" aria-expanded="false" aria-controls="help-panel">ⓘ How to type</button></div></header>
@@ -18,10 +18,10 @@
 <section class="editor-card" aria-label="Japanese text editor">
 <div class="editor-toolbar"><div class="card-heading"><span class="section-number">01</span><h2>Write something</h2></div><button id="ime-toggle" class="ime-toggle" type="button" aria-pressed="true" disabled><span class="mode-glyph">JP</span><span>Japanese input</span><span class="mode-switch">ON</span></button></div>
 <div id="loading-panel" class="loading-panel" role="status"><span id="loading-label">Getting Japanese input ready…</span><progress id="loading-progress" max="100" value="0" aria-label="Dictionary download progress"></progress><button id="retry-button" type="button" hidden>Try again</button></div>
-<label class="visually-hidden" for="editor">Your text</label><textarea id="editor" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="Start typing in romaji…&#10;Try: nihongo → 日本語" aria-describedby="input-hint privacy-heading" disabled></textarea>
+<div class="editor-field"><div class="editor-field-header"><label for="editor">Your text</label><button id="clear-button" class="editor-clear" type="button" aria-controls="editor" title="Clear all text" disabled><span aria-hidden="true">×</span> Clear text</button></div><textarea id="editor" spellcheck="false" autocomplete="off" autocapitalize="off" autocorrect="off" placeholder="Start typing in romaji…&#10;Try: nihongo → 日本語" aria-describedby="input-hint privacy-heading" disabled></textarea></div>
 <div class="conversion-panel" hidden><div class="conversion-heading"><i class="status-dot"></i><span id="composition-label">Converting your text</span><span class="conversion-guide">Enter to confirm</span></div><div id="composition" aria-label="Phrase segments being converted" lang="ja"></div><div id="candidates" aria-label="Kanji conversion candidates" aria-live="polite" lang="ja"></div></div>
 <div class="editor-meta"><p id="input-hint"><kbd>Space</kbd> convert <b>/</b> <kbd>Enter</kbd> confirm <b>/</b> <kbd>Esc</kbd> cancel</p><div class="count"><span id="char-count">0</span> characters</div></div>
-<div class="editor-actions"><button id="copy-button" type="button" class="button primary" disabled>▢ Copy text</button><button id="search-button" type="button" class="button secondary" title="Send this text to Google in a new tab" aria-describedby="search-disclosure" disabled>⌕ Search Google <span>↗</span></button><div class="minor-actions"><button id="undo-button" class="text-button" type="button" disabled>↶ Undo</button><button id="clear-button" class="text-button" type="button" disabled>Clear all</button></div></div>
+<div class="editor-actions"><button id="copy-button" type="button" class="button primary" disabled>▢ Copy text</button><button id="search-button" type="button" class="button secondary" title="Send this text to Google in a new tab" aria-describedby="search-disclosure" disabled>⌕ Search Google <span>↗</span></button><div class="minor-actions"><button id="undo-button" class="text-button" type="button" disabled>↶ Undo</button></div></div>
 <p id="search-disclosure" class="search-disclosure">Search Google opens a new tab and shares the text above with Google.</p>
 <div class="engine-line"><i class="status-dot"></i><span id="engine-status">Loading…</span><span id="engine-detail">Conversion happens on this device</span></div>
 </section>

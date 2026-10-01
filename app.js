@@ -345,7 +345,7 @@ function renderEmoji() {
   }
 }
 async function loadEmoji() {
-  const response = await fetch(url('data/emoji.json?v=enoki-2'));
+  const response = await fetch(url('data/emoji.json?v=enoki-3'));
   if (!response.ok) throw new Error('Could not load emoji data');
   emojiData = await response.json();
   emojiData.emoji.forEach((item) => { item.searchText = normalize([item.emoji, item.name, ...item.keywords].join(' ')); });
@@ -465,7 +465,7 @@ async function setupOffline() {
     const status = await new Promise((resolve) => {
       const channel = new MessageChannel();
       const timer = setTimeout(() => resolve(false), 5000);
-      channel.port1.onmessage = (event) => { clearTimeout(timer); resolve(event.data.ready && event.data.version === 'enoki-v2'); };
+      channel.port1.onmessage = (event) => { clearTimeout(timer); resolve(event.data.ready && event.data.version === 'enoki-v3'); };
       registration.active.postMessage({ type: 'STATUS' }, [channel.port2]);
     });
     $('offline-status').textContent = status ? 'Ready for offline use' : 'Offline setup incomplete';

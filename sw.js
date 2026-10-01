@@ -1,9 +1,9 @@
 // Cache only public application assets. Never store editor text or search queries.
-const VERSION = 'enoki-v2';
+const VERSION = 'enoki-v3';
 const PREFIX = `enoki:${new URL(self.registration.scope).pathname}:`;
 const CACHE = PREFIX + VERSION;
 const FILES = [
-  './', 'index.html', 'styles.css?v=enoki-2', 'app.js?v=enoki-2', 'data/emoji.json?v=enoki-2',
+  './', 'index.html', 'styles.css?v=enoki-3', 'app.js?v=enoki-3', 'data/emoji.json?v=enoki-3',
   'license-viewer.js', 'licenses/catalog.json',
   'vendor/hechima/hechima.js', 'vendor/hechima/hechima-worker.js',
   'vendor/keymap-engine/keymap-engine.js', 'vendor/keymaps/romaji.json',
